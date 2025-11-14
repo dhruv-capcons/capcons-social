@@ -1,0 +1,28 @@
+# robots.txt for CapCons
+# This file tells search engines which pages they can and cannot crawl
+
+User-agent: *
+Allow: /
+
+# Disallow brand guide section
+Disallow: /brandguide/
+
+# Disallow legal section
+Disallow: /legal/
+
+# Allow all other paths
+Allow: /about-us
+Allow: /career
+Allow: /contact-us
+Allow: /events
+Allow: /faq
+Allow: /features
+Allow: /how-to-videos
+Allow: /insights
+Allow: /jobs
+Allow: /media
+Allow: /pricing
+
+# Sitemap location
+Sitemap: https://capcons.com/sitemap.xml
+
