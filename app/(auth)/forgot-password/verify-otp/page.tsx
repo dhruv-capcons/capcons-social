@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Inter, Public_Sans } from "next/font/google";
 import { useSearchParams } from "next/navigation";
 import { useCountdownTimer } from "@/lib/timer";
@@ -24,7 +24,7 @@ const publicSans = Public_Sans({
   display: "swap",
 });
 
-const VerifyOTP = () => {
+const VerifyOTPContent = () => {
 
   // OTP states
   const [otp, setOtp] = useState("");
@@ -157,6 +157,14 @@ const VerifyOTP = () => {
         </p>
       </div>
     </div>
+  );
+};
+
+const VerifyOTP = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyOTPContent />
+    </Suspense>
   );
 };
 
