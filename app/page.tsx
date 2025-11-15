@@ -52,7 +52,7 @@ export default function Home() {
   const organizationSchema = generateOrganizationSchema();
   const websiteSchema = generateWebSiteSchema();
 
-  // redirect('/sign-up');
+  redirect('/sign-up');
 
   return (
     <>
@@ -67,11 +67,6 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
 
-      {/* Hero Section */}
-      <section className="">
-      
-       
-      </section>
     </>
   );
 }
