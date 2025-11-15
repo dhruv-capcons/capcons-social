@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, use } from "react";
 import { Inter, Public_Sans } from "next/font/google";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useCountdownTimer } from "@/lib/timer";
 
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import Link from "next/link";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -28,8 +30,14 @@ const VerifyOTP = () => {
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState(false);
 
-  const params = useParams();
-  const emailOrPhone = params?.identifier || "";
+  const { formattedTime , isZero, startCountdown, restartCountdown, } = useCountdownTimer();
+
+  useEffect(() => { 
+    startCountdown();
+  }, []);
+
+  const params = useSearchParams();
+  const emailOrPhone = params?.get("identifier") || "";
 //   const isPhoneInput = emailOrPhone.includes("@") ? false : true;
 
   const handleOtpComplete = (value: string) => {
@@ -46,6 +54,18 @@ const VerifyOTP = () => {
     }
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle OTP submission logic here
+    console.log("Submitted OTP:", otp);
+  }
+
+  const handleResendCode = () => {
+    restartCountdown();
+    // Add your resend code logic here
+    console.log("Resend code clicked");
+  }
+
 
   return (
     <div className="w-full">
@@ -55,13 +75,13 @@ const VerifyOTP = () => {
 
         </p>
         <p className={`${inter.variable} font-inter text-[11px]! font-normal`}>
-          We’ve sent an email to {emailOrPhone}, please enter the code below.
+          We’ve sent an email to <span className="font-semibold!">{emailOrPhone}</span>, please enter the code below.
          
         </p>
       </div>
 
       {/* verify otp */}
-        <form className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* OTP Input */}
           <div className="flex flex-col items-center space-y-4">
             <InputOTP
@@ -105,8 +125,7 @@ const VerifyOTP = () => {
             type="submit"
             className={`w-full mt-0 ${
               inter.variable
-            } bg-[#39089D] hover:bg-[#2a0674] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-sm disabled:opacity-50 cursor-pointer`}
-            disabled={otp.length !== 6}
+            } bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-sm disabled:opacity-50 cursor-pointer`}
           >
             Verify
           </button>
@@ -117,19 +136,24 @@ const VerifyOTP = () => {
       <p
         className={`text-[11px]! ${inter.variable}  font-medium text-center mt-2 cursor-pointer `}
       >
-        Send code again <span className="text-[#F52020B2]">00:20</span>
+        {isZero ? 
+        <>
+        <button onClick={handleResendCode} className="hover:underline cursor-pointer">
+          Resend code
+        </button>
+        </> : <>Send code again <span className="text-[#F52020B2]">{formattedTime}</span> </>}
       </p>
 
       {/* Login Link */}
       <div className="text-center mt-4">
         <p className={`${publicSans.variable} text-[13px]! font-light!`}>
           Already have an account?{" "}
-          <a
+          <Link
             href="/login"
             className="text-[#39089D] text-[13px]!  font-normal!"
           >
             Log in
-          </a>
+          </Link>
         </p>
       </div>
     </div>

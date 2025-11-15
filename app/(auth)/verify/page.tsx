@@ -1,14 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Inter, Public_Sans } from "next/font/google";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useCountdownTimer } from "@/lib/timer";
+import { useVerify } from "@/hooks/useAuth";
 
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import Link from "next/link";
+import { VerificationData } from "@/types/auth";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -27,25 +31,45 @@ const Verify = () => {
   // OTP states
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState(false);
+  const [otpIncomplete, setOtpIncomplete] = useState<boolean | null>(null);
 
-  const params = useParams();
-  const emailOrPhone = params?.identifier || "";
+  const { formattedTime , isZero, startCountdown, restartCountdown, } = useCountdownTimer();
+
+  const verify = useVerify();
+
+  const params = useSearchParams();
+  const emailOrPhone = params?.get("identifier") || "";
   const isPhoneInput = emailOrPhone.includes("@") ? false : true;
 
-  const handleOtpComplete = (value: string) => {
-    setOtp(value);
-    setOtpError(false);
+  useEffect(() => {
+    startCountdown();
+  }, []);
 
-    // Simulate wrong code validation
-    if (value !== "123456") {
-      setOtpError(true);
-    } else {
-      setOtpError(false);
-      // Handle successful verification
-      console.log("OTP verified successfully!");
-    }
+
+  const handleResendCode = () => {
+    restartCountdown();
+    // Add your resend code logic here
+    console.log("Resend code clicked");
   };
 
+  const handleVerifyOTP = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if(otp.length !== 6){  
+      setOtpIncomplete(true);
+      return;
+    }
+    
+
+    const verificationData = new FormData();
+    verificationData.append("credential", emailOrPhone);
+    verificationData.append("code", otp);
+    verificationData.append("method", isPhoneInput ? "phone" : "email");
+    verificationData.append("password_reset", "no");
+
+    const res = verify.mutate(verificationData);
+    console.log("Submitted OTP:", otp);
+  }
 
   return (
     <div className="w-full">
@@ -57,13 +81,13 @@ const Verify = () => {
 
         </p>
         <p className={`${inter.variable} font-inter text-[11px]! font-normal`}>
-          We’ve sent an email to {emailOrPhone}, please enter the code below.
+          We’ve sent an email to <span className="font-semibold!">{emailOrPhone}</span>, please enter the code below.
          
         </p>
       </div>
 
       {/* verify otp */}
-        <form className="space-y-6">
+        <form onSubmit={handleVerifyOTP} className="space-y-6">
           {/* OTP Input */}
           <div className="flex flex-col items-center space-y-4">
             <InputOTP
@@ -72,8 +96,8 @@ const Verify = () => {
               onChange={(value) => {
                 setOtp(value);
                 setOtpError(false);
-                if (value.length === 6) {
-                  handleOtpComplete(value);
+                if(value.length === 6) {
+                  setOtpIncomplete(false);
                 }
               }}
             >
@@ -92,6 +116,13 @@ const Verify = () => {
               </InputOTPGroup>
             </InputOTP>
 
+
+            {otpIncomplete &&  <p
+              className={`text-[#F54135] text-xs! font-normal -mt-2`}
+            >
+              Enter complete 6-digit code
+            </p>}
+
             {/* Error Message */}
             <p
               className={`text-[#F54135] text-xs! font-normal -mt-2 ${
@@ -105,10 +136,8 @@ const Verify = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className={`w-full mt-0 ${
-              inter.variable
-            } bg-[#39089D] hover:bg-[#2a0674] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-sm disabled:opacity-50 cursor-pointer`}
-            disabled={otp.length !== 6}
+            className={`w-full mt-0 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-sm disabled:opacity-50 cursor-pointer`}
+            // disabled={otp.length !== 6}
           >
             Verify
           </button>
@@ -119,19 +148,24 @@ const Verify = () => {
       <p
         className={`text-[11px]! ${inter.variable}  font-medium text-center mt-2 cursor-pointer `}
       >
-        Send code again <span className="text-[#F52020B2]">00:20</span>
+        {isZero ? 
+        <>
+        <button onClick={handleResendCode} className="hover:underline cursor-pointer">
+          Resend code
+        </button>
+        </> : <>Send code again <span className="text-[#F52020B2]">{formattedTime}</span> </>}
       </p>
 
       {/* Login Link */}
       <div className="text-center mt-4">
         <p className={`${publicSans.variable} text-[13px]! font-light!`}>
           Already have an account?{" "}
-          <a
+          <Link
             href="/login"
             className="text-[#39089D] text-[13px]!  font-normal!"
           >
             Log in
-          </a>
+          </Link>
         </p>
       </div>
     </div>

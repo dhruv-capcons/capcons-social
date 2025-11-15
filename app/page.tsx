@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { generateOrganizationSchema, generateWebSiteSchema } from "@/lib/schema";
 import { IMAGES } from "@/lib/images";
-import Image from "@/components/image";
+import { redirect } from "next/navigation";
+
 
 export const metadata: Metadata = {
   title: "Capcons | Build, Grow & Monetize Your Creator Community",
@@ -51,6 +52,8 @@ export default function Home() {
   const organizationSchema = generateOrganizationSchema();
   const websiteSchema = generateWebSiteSchema();
 
+  // redirect('/sign-up');
+
   return (
     <>
       <Script
@@ -65,23 +68,9 @@ export default function Home() {
       />
 
       {/* Hero Section */}
-      <section className="text-center py-16">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-          Build. Grow. Monetize.
-        </h1>
-        <p className="text-lg md:text-xl text-muted-foreground mt-4 max-w-2xl mx-auto">
-          Capcons is where creators, entrepreneurs, and storytellers build vibrant,
-          interest-driven communities that fuel culture and commerce.
-        </p>
-        <div className="mt-10 flex justify-center">
-          <Image
-            src="social.png"
-            alt="Capcons Creator Platform Hero Banner"
-            width={1200}
-            height={630}
-            priority
-          />
-        </div>
+      <section className="">
+      
+       
       </section>
     </>
   );

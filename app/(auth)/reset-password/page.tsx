@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Inter, Public_Sans } from "next/font/google";
 import { Eye, EyeOff } from "lucide-react";
 import { isValidPassword } from "@/lib/validations";
+import Link from "next/link";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -39,10 +40,10 @@ const ResetPassword = () => {
   const handleResetSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isValidPassword(formData.newPassword) === false) {
-      alert("Password does not meet the required criteria.");
-      return;
-    }
+    // if (isValidPassword(formData.newPassword) === false) {
+    //   alert("Password does not meet the required criteria.");
+    //   return;
+    // }
 
     // Check password mismatch when both fields have values
     const newPassword = formData.newPassword;
@@ -140,12 +141,12 @@ const ResetPassword = () => {
       <div className="text-center mt-4">
         <p className={`${publicSans.variable} text-[13px]! font-light!`}>
           Don’t have an account?{" "}
-          <a
-            href="/login"
+          <Link
+            href="/sign-up"
             className="text-[#39089D] text-[13px]!  font-normal!"
           >
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </div>
