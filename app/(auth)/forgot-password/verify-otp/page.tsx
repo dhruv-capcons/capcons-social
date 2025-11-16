@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useCountdownTimer } from "@/lib/timer";
 import { useRouter } from "next/navigation";
 import { useVerify } from "@/hooks/useAuth";
+import { useResendOTP } from "@/hooks/useAuth";
 
 import {
   InputOTP,
@@ -64,15 +65,37 @@ const VerifyOTPContent = () => {
     verificationData.append("password_reset", "yes");
     verificationData.append("request_id", requestId);
 
-    verify.mutate(verificationData);
+    verify.mutate(verificationData, {
+      onSuccess: (data) => {
+        router.push(`/forgot-password/reset?identifier=${emailOrPhone}`);
+        console.log("Verify OTP Success:", data);
+      },
+      onError: (error) => {
+        setOtpError(true);
+        console.error("Verify OTP Error:", error);
+      },
+    });
 
-    // router.push(`/reset-password`);
   };
 
+  const resendOtp = useResendOTP();
+
   const handleResendCode = () => {
-    restartCountdown();
-    // Add your resend code logic here
-    console.log("Resend code clicked");
+
+    const resendData = new FormData();
+    resendData.append("request_id", requestId);
+    resendData.append("circle_id", "default_circle");
+
+    resendOtp.mutate(resendData, {
+      onSuccess: (data) => {
+        restartCountdown();
+        console.log("Resend OTP Success:", data);
+      },
+      onError: (error) => {
+        console.error("Resend OTP Error:", error);
+      },
+    });
+
   };
 
   return (

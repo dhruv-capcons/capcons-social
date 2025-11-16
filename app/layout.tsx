@@ -4,6 +4,7 @@ import "./globals.css";
 import { IMAGES } from "@/lib/images";
 import Image from "next/image";
 import QueryProvider from "@/components/QueryProvider";
+import Link from "next/link";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -131,14 +132,16 @@ export default function RootLayout({
                 className="sm:min-w-110 max-w-110 bg-white rounded-lg flex-1 p-6 px-12 flex flex-col justify-start"
               >
                 <div>
-                  <Image
-                    src="https://assets.capcons.com/images/logo-footer.png"
-                    alt="Capcons logo"
-                    width={200}
-                    height={52}
-                    className="h-10 w-auto"
-                    unoptimized
-                  />
+                  <Link href="/sign-up">
+                    <Image
+                      src="https://assets.capcons.com/images/logo-footer.png"
+                      alt="Capcons logo"
+                      width={200}
+                      height={52}
+                      className="h-10 w-auto"
+                      unoptimized
+                    />
+                  </Link>
                 </div>
                 <div
                   style={{ height: "-webkit-fill-available" }}

@@ -5,6 +5,7 @@ import { Inter, Public_Sans } from "next/font/google";
 import { useSearchParams } from "next/navigation";
 import { useCountdownTimer } from "@/lib/timer";
 import { useVerify } from "@/hooks/useAuth";
+import { useResendOTP } from "@/hooks/useAuth";
 
 import {
   InputOTP,
@@ -39,17 +40,29 @@ const VerifyContent = () => {
 
   const params = useSearchParams();
   const emailOrPhone = params?.get("identifier") || "";
+  const requestId = params?.get("request_id") || "";
+  const userId = params?.get("user_id") || "";
   const isPhoneInput = emailOrPhone.includes("@") ? false : true;
 
   useEffect(() => {
     startCountdown();
   }, []);
 
-
+  const resendOtp = useResendOTP();
   const handleResendCode = () => {
-    restartCountdown();
-    // Add your resend code logic here
-    console.log("Resend code clicked");
+     const resendData = new FormData();
+    resendData.append("request_id", requestId);
+    resendData.append("circle_id", userId);
+
+    resendOtp.mutate(resendData, {
+      onSuccess: (data) => {
+        restartCountdown();
+        console.log("Resend OTP Success:", data);
+      },
+      onError: (error) => {
+        console.error("Resend OTP Error:", error);
+      },
+    });
   };
 
   const handleVerifyOTP = (e: React.FormEvent) => {
@@ -69,8 +82,9 @@ const VerifyContent = () => {
     verificationData.append("code", otp);
     verificationData.append("method", isPhoneInput ? "phone" : "email");
     verificationData.append("password_reset", "no");
+    verificationData.append("request_id", requestId);
 
-    const res = verify.mutate(verificationData);
+    verify.mutate(verificationData);
     
   }
 

@@ -7,10 +7,11 @@ import {
   User,
   LoginData,
   RegisterData,
+  ResendData,
   VerificationData,
   ForgetPassData,
-  AuthResponse,
   ResetPasswordData,
+  AuthResponse,
   ApiError
 } from '@/types/auth'
 
@@ -47,10 +48,10 @@ export function useLogin() {
 export function useRegister() {
   const { setLoading } = useAuthStore()
 
-  return useMutation<AuthResponse, ApiError, RegisterData>({
+  return useMutation<{is_new_user: boolean, message: string, request_id: string, user_id: string}, ApiError, RegisterData>({
     mutationFn: async (userData: RegisterData) => {
       setLoading(true)
-      const { data } = await api.post<AuthResponse>('/register', userData, {
+      const { data } = await api.post<{is_new_user: boolean, message: string, request_id: string, user_id: string}>('/register', userData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -133,11 +134,8 @@ export function useForgotPassword() {
 // Reset password
 export function useResetPassword() {
   return useMutation<{ message: string }, ApiError, ResetPasswordData>({
-    mutationFn: async ({ token, password }: ResetPasswordData) => {
-      const { data } = await api.post<{ message: string }>('/reset-password', { 
-        token, 
-        password 
-      },{
+    mutationFn: async ( resetData: ResetPasswordData) => {
+      const { data } = await api.post<{ message: string }>('/forget-password/reset', resetData,{
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -150,7 +148,7 @@ export function useResetPassword() {
 // Verify email
 export function useVerify() {
   return useMutation<AuthResponse, ApiError, FormData>({
-    mutationFn: async (verifyData: FormData) => {
+    mutationFn: async (verifyData: VerificationData) => {
       const { data } = await api.post<AuthResponse>('/verify', verifyData, {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -166,10 +164,10 @@ export function useVerify() {
 
 
 // Resend verification email
-export function useResendVerification() {
-  return useMutation<{ message: string }, ApiError, { email: string }>({
-    mutationFn: async ({ email }: { email: string }) => {
-      const { data } = await api.post<{ message: string }>('/api/auth/resend-verification', { email },{
+export function useResendOTP() {
+  return useMutation<{ message: string }, ApiError, ResendData>({
+    mutationFn: async (resendData: ResendData) => {
+      const { data } = await api.post<{ message: string }>('/resend-otp',resendData ,{
         headers: {
           'Content-Type': 'multipart/form-data'
         }

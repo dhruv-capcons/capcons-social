@@ -25,7 +25,10 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Handle unauthorized - redirect to login
       if (typeof window !== 'undefined') {
-        window.location.href = '/login'
+        setTimeout(() => {        
+        // window.location.href = '/login' 
+        }, 5000);
+        
       }
     }
     return Promise.reject(error)

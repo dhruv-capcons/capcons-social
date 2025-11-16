@@ -34,10 +34,9 @@ export interface AuthResponse {
   message?: string
 }
 
-export interface ResetPasswordData {
-  token: string
-  password: string
-  confirmPassword?: string
+export interface ResetPasswordDataObject {
+  credential: string
+  new_password?: string
 }
 
 export interface ForgetPasswordObject {
@@ -54,9 +53,18 @@ export interface VerificationDataObject {
   method?: 'email' | 'phone'
 }
 
+export interface ResendDataObject {
+  request_id: string
+  circle_id: string
+}
 
 
 export interface ApiError {
+  response?: {
+    data: {
+      message: string
+    }
+  }
   message: string
   statusCode: number
   errors?: Record<string, string[]>
@@ -66,3 +74,5 @@ export type LoginData = LoginCredentials | FormData
 export type VerificationData = VerificationDataObject | FormData
 export type RegisterData = RegisterDataObject | FormData
 export type ForgetPassData = ForgetPasswordObject | FormData
+export type ResetPasswordData = ResetPasswordDataObject | FormData
+export type ResendData = ResendDataObject | FormData

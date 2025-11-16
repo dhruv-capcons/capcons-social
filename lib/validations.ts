@@ -44,7 +44,7 @@ export function validatePassword(password: string): PasswordValidationResult {
   const specialCharRegex = /[!@#$%^&*_\-+.,~]/;
   
   if (!specialCharRegex.test(password)) {
-    errors.push("Password must contain at least one special character (!@#$%^&*_-+.,~)");
+    errors.push("Password must contain at least one special character");
   }
   
   return {

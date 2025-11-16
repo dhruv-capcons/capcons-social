@@ -4,7 +4,10 @@ import React, { useState } from "react";
 import { Inter, Public_Sans } from "next/font/google";
 import { Eye, EyeOff } from "lucide-react";
 import { validatePassword } from "@/lib/validations";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useResetPassword } from "@/hooks/useAuth";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -28,6 +31,16 @@ const ResetPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordMismatch, setPasswordMismatch] = useState(false);
 
+  const [isPasswordValid, setPasswordValid] = useState<null | boolean>(null);
+
+  const [errors, setErrors] = useState<string[]>([]);
+
+  const params = useSearchParams();
+  const emailOrPhone = params?.get("identifier") || "";
+
+  const resetPassword = useResetPassword();
+  const router = useRouter();
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const newFormData = {
@@ -40,10 +53,19 @@ const ResetPassword = () => {
   const handleResetSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // if (isValidPassword(formData.newPassword) === false) {
-    //   alert("Password does not meet the required criteria.");
-    //   return;
-    // }
+    const { errors: passwordErrors, isValid } = validatePassword(
+      formData.newPassword
+    );
+
+    if (!isValid) {
+      setPasswordValid(false);
+      setErrors(passwordErrors);
+      return;
+    } else {
+      setPasswordValid(true);
+    }
+
+    setErrors([]);
 
     // Check password mismatch when both fields have values
     const newPassword = formData.newPassword;
@@ -51,14 +73,24 @@ const ResetPassword = () => {
 
     if (confirmPassword && newPassword && confirmPassword !== newPassword) {
       setPasswordMismatch(true);
+      return;
     } else {
       setPasswordMismatch(false);
     }
 
-    if (formData.newPassword !== formData.confirmPassword) {
-      setPasswordMismatch(true);
-      return;
-    }
+    const resetData = new FormData();
+    resetData.append("credential", emailOrPhone);
+    resetData.append("new_password", formData.newPassword);
+
+    resetPassword.mutate(resetData, {
+      onSuccess: (data) => {
+        console.log("Reset Password Success:", data);
+      },
+      onError: (error) => {
+        setErrors([String(error?.response?.data?.message) || "An error occurred"]);
+        console.error("Reset Password Error:", error);
+      },
+    });
 
     // Handle reset password logic here
     console.log("Reset Password Data:", formData);
@@ -88,7 +120,9 @@ const ResetPassword = () => {
             onChange={handleInputChange}
             placeholder="Enter New Password"
             className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border rounded-xl placeholder-[#5A5A5A] transition-all duration-200 ${
-              passwordMismatch ? "border-[#EE5833]" : "border-[#D9D9D9]"
+              passwordMismatch || isPasswordValid === false
+                ? "border-[#EE5833]"
+                : "border-[#D9D9D9]"
             }`}
           />
           <button
@@ -96,7 +130,11 @@ const ResetPassword = () => {
             onClick={() => setShowNewPassword(!showNewPassword)}
             className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#a5a4a4]  hover:text-[#b1b1b1] transition-colors cursor-pointer"
           >
-            {showNewPassword ? <EyeOff className="size-3.5 md:size-4 lg:size-5" /> : <Eye className="size-3.5 md:size-4 lg:size-5" />}
+            {showNewPassword ? (
+              <EyeOff className="size-3.5 md:size-4 lg:size-5" />
+            ) : (
+              <Eye className="size-3.5 md:size-4 lg:size-5" />
+            )}
           </button>
         </div>
 
@@ -117,16 +155,24 @@ const ResetPassword = () => {
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#a5a4a4]  hover:text-[#b1b1b1] transition-colors cursor-pointer"
           >
-            {showConfirmPassword ? <EyeOff className="size-3.5 md:size-4 lg:size-5" /> : <Eye className="size-3.5 md:size-4 lg:size-5" />}
+            {showConfirmPassword ? (
+              <EyeOff className="size-3.5 md:size-4 lg:size-5" />
+            ) : (
+              <Eye className="size-3.5 md:size-4 lg:size-5" />
+            )}
           </button>
         </div>
 
-        {/* Password Mismatch Error */}
-   
-          <p className={`text-[#EE5833] font-medium! ${inter.variable} text-[10px]! -mt-2 ml-1 ${passwordMismatch ? "" : "invisible"}`}>
-            Passwords do not match
-          </p>
-   
+        {/* Password Mismatch & Error */}
+        <p
+          className={`text-[#EE5833] font-medium! ${
+            inter.variable
+          } text-[10px]! -mt-2 ml-1 ${
+            passwordMismatch || errors.length > 0 ? "" : "invisible"
+          }`}
+        >
+          {errors.length > 0 ? <>{errors[0]}</> : "Passwords do not match"}
+        </p>
 
         {/* Submit Button */}
         <button

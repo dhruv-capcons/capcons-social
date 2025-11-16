@@ -88,14 +88,20 @@ const SignUp = () => {
 
     const registerData = new FormData();
 
-    registerData.append("credential", formData.emailOrPhone);
-    registerData.append("password", formData.password);
+    registerData.append("credential", formData.emailOrPhone.trim());
+    registerData.append("password", formData.password?.trim());
     registerData.append("country_code", formData.countryCode);
-    registerData.append("circle_id", "default_circle");
+    // registerData.append("circle_id", "default_circle");
 
-    register.mutate(registerData);
+    register.mutate(registerData, {
+      onSuccess: (data) => {
+        router.push(`/verify?identifier=${formData.emailOrPhone}&request_id=${data.request_id}&user_id=${data.user_id}`);
+      },
+      onError: (error) => {
+        console.error("Register Error:", error);
+      },  
+    });
 
-    router.push(`/verify?identifier=${formData.emailOrPhone}`);
   };
 
   return (
@@ -232,22 +238,17 @@ const SignUp = () => {
           </button>
         </div>
 
-        {/* Password Mismatch Error */}
+        {/* Password Mismatch & Error */}
+         <p
+          className={`text-[#EE5833] font-medium! ${
+            inter.variable
+          } text-[10px]! -mt-2 ml-1 ${
+            isPasswordMismatch || errors.length > 0 ? "" : "invisible"
+          }`}
+        >
+          {errors.length > 0 ? <>{errors[0]}</> : "Passwords do not match"}
+        </p>
 
-        {isPasswordMismatch && (
-          <p
-            className={`text-[#EE5833] font-medium! ${inter.variable} text-[10px]! -mt-2 ml-1 `}
-          >
-            Passwords do not match
-          </p>
-        )}
-        {errors.length > 0 && (
-          <p
-            className={`text-[#EE5833] font-medium! ${inter.variable} text-[10px]! -mt-2 ml-1 `}
-          >
-            {errors[0]}
-          </p>
-        )}
 
         {/* Terms and Conditions Checkbox */}
         <div className="flex items-start gap-2">
@@ -269,7 +270,7 @@ const SignUp = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className={`w-full mt-6.5 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-xs! cursor-pointer`}
+          className={`w-full mt-6 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-xs! cursor-pointer`}
         >
           Sign Up
         </button>
