@@ -17,7 +17,7 @@ export interface LoginCredentials {
   updatedAt?: string
 }
 
-export type LoginData = LoginCredentials | FormData
+
 
 export interface RegisterDataObject {
   credential: string
@@ -26,7 +26,7 @@ export interface RegisterDataObject {
   country_code?: string
 }
 
-export type RegisterData = RegisterDataObject | FormData
+
 
 export interface AuthResponse {
   user: User
@@ -40,6 +40,12 @@ export interface ResetPasswordData {
   confirmPassword?: string
 }
 
+export interface ForgetPasswordObject {
+  credential: string
+  country_code?: string
+  circle_id?: string
+}
+
 export interface VerificationDataObject {
   credential: string
   code: string
@@ -48,10 +54,15 @@ export interface VerificationDataObject {
   method?: 'email' | 'phone'
 }
 
-export type VerificationData = VerificationDataObject | FormData
+
 
 export interface ApiError {
   message: string
   statusCode: number
   errors?: Record<string, string[]>
 }
+
+export type LoginData = LoginCredentials | FormData
+export type VerificationData = VerificationDataObject | FormData
+export type RegisterData = RegisterDataObject | FormData
+export type ForgetPassData = ForgetPasswordObject | FormData

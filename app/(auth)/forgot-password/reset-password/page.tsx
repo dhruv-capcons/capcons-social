@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Inter, Public_Sans } from "next/font/google";
 import { Eye, EyeOff } from "lucide-react";
-import { isValidPassword } from "@/lib/validations";
+import { validatePassword } from "@/lib/validations";
 import Link from "next/link";
 
 const inter = Inter({

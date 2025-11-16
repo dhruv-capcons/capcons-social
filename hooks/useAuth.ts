@@ -8,6 +8,7 @@ import {
   LoginData,
   RegisterData,
   VerificationData,
+  ForgetPassData,
   AuthResponse,
   ResetPasswordData,
   ApiError
@@ -21,7 +22,11 @@ export function useLogin() {
   return useMutation<AuthResponse, ApiError, LoginData>({
     mutationFn: async (credentials: LoginData) => {
       setLoading(true)
-      const { data } = await api.post<AuthResponse>('/login', credentials)
+      const { data } = await api.post<AuthResponse>('/login', credentials, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
       return data
     },
     onSuccess: (data: AuthResponse) => {
@@ -46,7 +51,9 @@ export function useRegister() {
     mutationFn: async (userData: RegisterData) => {
       setLoading(true)
       const { data } = await api.post<AuthResponse>('/register', userData, {
-        headers: userData instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : undefined
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       })
       return data
     },
@@ -111,9 +118,13 @@ export function useLogout() {
 
 // Forgot password
 export function useForgotPassword() {
-  return useMutation<{ message: string }, ApiError, { email: string }>({
-    mutationFn: async ({ email }: { email: string }) => {
-      const { data } = await api.post<{ message: string }>('/forgot-password', { email })
+  return useMutation<{ message: string, request_id: string }, ApiError, ForgetPassData>({
+    mutationFn: async (forgetPassData : ForgetPassData) => {
+      const { data } = await api.post<{ message: string, request_id: string }>('/forget-password', forgetPassData,{
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
       return data
     },
   })
@@ -126,6 +137,10 @@ export function useResetPassword() {
       const { data } = await api.post<{ message: string }>('/reset-password', { 
         token, 
         password 
+      },{
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       })
       return data
     },
@@ -134,9 +149,13 @@ export function useResetPassword() {
 
 // Verify email
 export function useVerify() {
-  return useMutation<AuthResponse, ApiError, VerificationData>({
-    mutationFn: async (verifyData : VerificationData) => {
-      const { data } = await api.post<AuthResponse>('/verify', verifyData)
+  return useMutation<AuthResponse, ApiError, FormData>({
+    mutationFn: async (verifyData: FormData) => {
+      const { data } = await api.post<AuthResponse>('/verify', verifyData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
       return data
     },
     onSuccess: (data: AuthResponse) => {
@@ -145,11 +164,16 @@ export function useVerify() {
   })
 }
 
+
 // Resend verification email
 export function useResendVerification() {
   return useMutation<{ message: string }, ApiError, { email: string }>({
     mutationFn: async ({ email }: { email: string }) => {
-      const { data } = await api.post<{ message: string }>('/api/auth/resend-verification', { email })
+      const { data } = await api.post<{ message: string }>('/api/auth/resend-verification', { email },{
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
       return data
     },
   })

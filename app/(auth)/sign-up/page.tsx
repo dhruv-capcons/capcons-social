@@ -29,7 +29,7 @@ const SignUp = () => {
     confirmPassword: "",
   });
 
-  const register = useRegister()
+  const register = useRegister();
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -41,8 +41,11 @@ const SignUp = () => {
 
   const [errors, setErrors] = useState<string[]>([]);
 
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const handleInputChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -59,14 +62,15 @@ const SignUp = () => {
   const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { errors: passwordErrors, isValid } = validatePassword(formData.password);
+    const { errors: passwordErrors, isValid } = validatePassword(
+      formData.password
+    );
 
     if (!isValid) {
       setPasswordValid(false);
       setErrors(passwordErrors);
       return;
-    }
-    else{
+    } else {
       setPasswordValid(true);
     }
 
@@ -84,13 +88,12 @@ const SignUp = () => {
 
     const registerData = new FormData();
 
-    registerData.append('credential', formData.emailOrPhone);
-    registerData.append('password', formData.password);
-    registerData.append('country_code', formData.countryCode);
-    registerData.append('circle_id', 'default_circle');
+    registerData.append("credential", formData.emailOrPhone);
+    registerData.append("password", formData.password);
+    registerData.append("country_code", formData.countryCode);
+    registerData.append("circle_id", "default_circle");
 
-    register.mutate(registerData)
-
+    register.mutate(registerData);
 
     router.push(`/verify?identifier=${formData.emailOrPhone}`);
   };
@@ -128,7 +131,12 @@ const SignUp = () => {
             <div className="flex space-x-2">
               <div className="relative flex items-center backdrop-blur-sm border border-[#D9D9D9] rounded-xl min-w-20">
                 <span className="absolute left-3">🇮🇳</span>
-                <select value={formData.countryCode} onChange={handleInputChange} name="countryCode"   className="w-full bg-transparent border-none outline-none pl-8 pr-8 py-4 text-xs! appearance-none">
+                <select
+                  value={formData.countryCode}
+                  onChange={handleInputChange}
+                  name="countryCode"
+                  className="w-full bg-transparent border-none outline-none pl-8 pr-8 py-4 text-xs! appearance-none"
+                >
                   <option value="91">+91</option>
                   <option value="1">+1</option>
                   <option value="44">+44</option>
@@ -179,7 +187,11 @@ const SignUp = () => {
             onChange={handleInputChange}
             placeholder="Password"
             className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200
-               ${isPasswordMismatch || isPasswordValid === false ? "border-[#EE5833]" : "border-[#D9D9D9]"}
+               ${
+                 isPasswordMismatch || isPasswordValid === false
+                   ? "border-[#EE5833]"
+                   : "border-[#D9D9D9]"
+               }
               `}
           />
           <button
@@ -221,13 +233,21 @@ const SignUp = () => {
         </div>
 
         {/* Password Mismatch Error */}
-   
-         {isPasswordMismatch &&  <p className={`text-[#EE5833] font-medium! ${inter.variable} text-[10px]! -mt-2 ml-1 `}>
+
+        {isPasswordMismatch && (
+          <p
+            className={`text-[#EE5833] font-medium! ${inter.variable} text-[10px]! -mt-2 ml-1 `}
+          >
             Passwords do not match
-          </p>}
-         {errors.length > 0 &&  <p className={`text-[#EE5833] font-medium! ${inter.variable} text-[10px]! -mt-2 ml-1 `}>
+          </p>
+        )}
+        {errors.length > 0 && (
+          <p
+            className={`text-[#EE5833] font-medium! ${inter.variable} text-[10px]! -mt-2 ml-1 `}
+          >
             {errors[0]}
-          </p>}
+          </p>
+        )}
 
         {/* Terms and Conditions Checkbox */}
         <div className="flex items-start gap-2">

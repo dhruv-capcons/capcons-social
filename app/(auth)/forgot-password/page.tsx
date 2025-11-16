@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { Inter, Public_Sans } from "next/font/google";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useForgotPassword } from "@/hooks/useAuth";
+import { count } from "console";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -20,13 +22,15 @@ const publicSans = Public_Sans({
 const ForgotPassword = () => {
   const [formData, setFormData] = useState({
     emailOrPhone: "",
+    countryCode: "91",
   });
 
   const [isPhoneInput, setIsPhoneInput] = useState(false);
 
   const router = useRouter();
+  const forgetPassword = useForgotPassword();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -42,10 +46,23 @@ const ForgotPassword = () => {
 
   const handleForgotPassword = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle forgot password logic here
-    console.log("Forgot Password Data:", formData);
+    
+    const forgetPassData = new FormData();
+    forgetPassData.append('credential', formData.emailOrPhone);
+    if(isPhoneInput){
+      forgetPassData.append('country_code', formData.countryCode);
+    }
 
-    router.push(`/forgot-password/verify-otp/${formData.emailOrPhone}`);
+    forgetPassword.mutate(forgetPassData, {
+      onSuccess: (data) => {
+        router.push(`/forgot-password/verify-otp?identifier=${formData.emailOrPhone}&request_id=${data.request_id}`);
+        console.log("Forgot Password Success:", data);
+      },
+      onError: (error) => {
+        console.error("Forgot Password Error:", error);
+      },
+    });
+    
   };
 
   return (
@@ -70,11 +87,11 @@ const ForgotPassword = () => {
             <div className="flex space-x-2">
               <div className="relative flex items-center backdrop-blur-sm border border-[#D9D9D9] rounded-xl min-w-20">
                 <span className="absolute left-3">🇮🇳</span>
-                <select className="w-full bg-transparent border-none outline-none pl-8 pr-8 py-4 text-xs! appearance-none">
-                  <option value="+91">+91</option>
-                  <option value="+1">+1</option>
-                  <option value="+44">+44</option>
-                  <option value="+65">+65</option>
+                <select value={formData.countryCode} onChange={handleInputChange}  name="countryCode" className="w-full bg-transparent border-none outline-none pl-8 pr-8 py-4 text-xs! appearance-none">
+                  <option value="91">+91</option>
+                  <option value="1">+1</option>
+                  <option value="44">+44</option>
+                  <option value="65">+65</option>
                 </select>
                 <svg
                   className="w-4 h-4 text-gray-400 pointer-events-none absolute right-3"

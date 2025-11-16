@@ -12,7 +12,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import Link from "next/link";
-import { VerificationData } from "@/types/auth";
+
 
 const inter = Inter({
   variable: "--font-inter",
@@ -59,6 +59,9 @@ const VerifyContent = () => {
       setOtpIncomplete(true);
       return;
     }
+    else{
+      setOtpIncomplete(false);
+    }
     
 
     const verificationData = new FormData();
@@ -68,7 +71,7 @@ const VerifyContent = () => {
     verificationData.append("password_reset", "no");
 
     const res = verify.mutate(verificationData);
-    console.log("Submitted OTP:", otp);
+    
   }
 
   return (
