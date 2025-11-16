@@ -37,7 +37,7 @@ export function useCountdownTimer() {
   };
 
   const restartCountdown = () => {
-    setSeconds(50);
+    setSeconds(30);
     setIsRunning(true);
   };
 
