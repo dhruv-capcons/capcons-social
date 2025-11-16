@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense} from "react";
 import { Inter, Public_Sans } from "next/font/google";
 import { Eye, EyeOff } from "lucide-react";
 import { validatePassword } from "@/lib/validations";
@@ -21,7 +21,7 @@ const publicSans = Public_Sans({
   display: "swap",
 });
 
-const ResetPassword = () => {
+const ResetPasswordContent = () => {
   const [formData, setFormData] = useState({
     newPassword: "",
     confirmPassword: "",
@@ -196,6 +196,15 @@ const ResetPassword = () => {
         </p>
       </div>
     </div>
+  );
+};
+
+
+const ResetPassword = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordContent />
+    </Suspense>
   );
 };
 
