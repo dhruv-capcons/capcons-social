@@ -32,6 +32,15 @@ export interface AuthResponse {
   user: User
   token?: string
   message?: string
+  data?: {
+    access_token?: string
+    refresh_token?: string
+    is_verified?: boolean
+    user_id?: string
+    role?: string
+    two_fa_required?: boolean
+    request_id?: string
+  }
 }
 
 export interface ResetPasswordDataObject {

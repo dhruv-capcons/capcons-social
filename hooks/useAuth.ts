@@ -28,6 +28,26 @@ export function useLogin() {
           'Content-Type': 'multipart/form-data'
         }
       })
+      
+      // Store tokens in HTTP-only cookies via our API route
+      if (data?.data?.access_token && data?.data?.refresh_token) {
+        const rememberMe = credentials instanceof FormData 
+          ? credentials.get('remember_user') === 'yes'
+          : credentials.remember_user === 'yes';
+          
+        await fetch('/api/auth/session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            access_token: data.data.access_token,
+            refresh_token: data.data.refresh_token,
+            remember_me: rememberMe,
+          }),
+        });
+      }
+      
       return data
     },
     onSuccess: (data: AuthResponse) => {
@@ -76,10 +96,19 @@ export function useUser() {
     queryKey: ['user'],
     queryFn: async (): Promise<User | null> => {
       try {
-        const { data } = await api.get<{ user: User }>('/me')
-        return data.user
+        // First verify the session via our cookie-based API
+        const sessionRes = await fetch('/api/auth/verify');
+        const session = await sessionRes.json();
+        
+        if (!session.authenticated) {
+          return null;
+        }
+        
+        // If authenticated, fetch full user data from backend
+        const { data } = await api.get<{ user: User }>('/me');
+        return data.user;
       } catch {
-        return null
+        return null;
       }
     },
     enabled: !user, // Only fetch if we don't have user in Zustand
@@ -103,7 +132,20 @@ export function useLogout() {
 
   return useMutation<void, ApiError, void>({
     mutationFn: async (): Promise<void> => {
-      await api.post('/logout')
+      // Call our API route to clear cookies
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      // Also call backend logout if needed
+      try {
+        await api.post('/logout');
+      } catch {
+        // Continue even if backend logout fails
+      }
     },
     onSuccess: () => {
       clearAuth()

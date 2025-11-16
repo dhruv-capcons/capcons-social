@@ -81,21 +81,7 @@ const Login = () => {
 
     login.mutate(loginData,{
       onSuccess: (data) => {
-        
         console.log("Login Success:", data);
-
-        const res = {
-    "data": {
-        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjMzMjk5MDEsInN1YiI6IjY5MWEzZmIzOGQ5Nzk2OGE4NzFkNTc1NSJ9.7czr950gDs5n3IpZyZ_iu36aUG4rlap546ZzkRKln-M",
-        "is_verified": true,
-        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjM5MzI5MDEsInN1YiI6IjY5MWEzZmIzOGQ5Nzk2OGE4NzFkNTc1NSJ9.8-FkCSJ6lCb4QAO9g5V5XjN580QqQ5mpi2thTRhhEAg",
-        "request_id": "",
-        "role": "",
-        "two_fa_required": false,
-        "user_id": "691a3fb38d97968a871d5755"
-    },
-    "message": "login successful"
-}
       },
       onError: (error) => {
         setErrors([error?.response?.data.message || "Login failed. Please try again."]);
