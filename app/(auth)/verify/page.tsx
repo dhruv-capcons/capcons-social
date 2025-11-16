@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useCountdownTimer } from "@/lib/timer";
 import { useVerify } from "@/hooks/useAuth";
 import { useResendOTP } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 import {
   InputOTP,
@@ -37,6 +38,7 @@ const VerifyContent = () => {
   const { formattedTime , isZero, startCountdown, restartCountdown, } = useCountdownTimer();
 
   const verify = useVerify();
+  const router = useRouter();
 
   const params = useSearchParams();
   const emailOrPhone = params?.get("identifier") || "";
@@ -84,7 +86,16 @@ const VerifyContent = () => {
     verificationData.append("password_reset", "no");
     verificationData.append("request_id", requestId);
 
-    verify.mutate(verificationData);
+    verify.mutate(verificationData, {
+      onSuccess: (data) => {
+        router.push("/login");
+        console.log("Verify OTP Success:", data);
+      },
+      onError: (error) => {
+        setOtpError(true);
+        console.error("Verify OTP Error:", error);
+      },
+    });
     
   }
 
