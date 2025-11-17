@@ -125,39 +125,6 @@ export function useUser() {
   return query
 }
 
-// Logout mutation
-export function useLogout() {
-  const queryClient = useQueryClient()
-  const { clearAuth } = useAuthStore()
-
-  return useMutation<void, ApiError, void>({
-    mutationFn: async (): Promise<void> => {
-      // Call our API route to clear cookies
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      // Also call backend logout if needed
-      try {
-        await api.post('/logout');
-      } catch {
-        // Continue even if backend logout fails
-      }
-    },
-    onSuccess: () => {
-      clearAuth()
-      queryClient.clear() // Clear all queries
-    },
-    onError: () => {
-      // Even if API call fails, clear local auth
-      clearAuth()
-      queryClient.clear()
-    },
-  })
-}
 
 // Forgot password
 export function useForgotPassword() {
@@ -215,6 +182,40 @@ export function useResendOTP() {
         }
       })
       return data
+    },
+  })
+}
+
+// Logout mutation
+export function useLogout() {
+  const queryClient = useQueryClient()
+  const { clearAuth } = useAuthStore()
+
+  return useMutation<void, ApiError, void>({
+    mutationFn: async (): Promise<void> => {
+      // Call our API route to clear cookies
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      // Also call backend logout if needed
+      try {
+        await api.get('/logout');
+      } catch {
+        // Continue even if backend logout fails
+      }
+    },
+    onSuccess: () => {
+      clearAuth()
+      queryClient.clear() // Clear all queries
+    },
+    onError: () => {
+      // Even if API call fails, clear local auth
+      clearAuth()
+      queryClient.clear()
     },
   })
 }
