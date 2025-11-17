@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useAuthStore } from '@/store/authStore'
-import api from '@/lib/axios'
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/authStore";
+import api from "@/lib/axios";
 import {
   User,
   LoginData,
@@ -12,33 +12,34 @@ import {
   ForgetPassData,
   ResetPasswordData,
   AuthResponse,
-  ApiError
-} from '@/types/auth'
+  ApiError,
+} from "@/types/auth";
 
 // Login mutation
 export function useLogin() {
-  const queryClient = useQueryClient()
-  const { setUser, setLoading } = useAuthStore()
+  const queryClient = useQueryClient();
+  const { setUser, setLoading } = useAuthStore();
 
   return useMutation<AuthResponse, ApiError, LoginData>({
     mutationFn: async (credentials: LoginData) => {
-      setLoading(true)
-      const { data } = await api.post<AuthResponse>('/login', credentials, {
+      setLoading(true);
+      const { data } = await api.post<AuthResponse>("/login", credentials, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       // Store tokens in HTTP-only cookies via our API route
       if (data?.data?.access_token && data?.data?.refresh_token) {
-        const rememberMe = credentials instanceof FormData 
-          ? credentials.get('remember_user') === 'yes'
-          : credentials.remember_user === 'yes';
-          
-        await fetch('/api/auth/session', {
-          method: 'POST',
+        const rememberMe =
+          credentials instanceof FormData
+            ? credentials.get("remember_user") === "yes"
+            : credentials.remember_user === "yes";
+
+        await fetch("/api/auth/session", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             access_token: data.data.access_token,
@@ -47,65 +48,79 @@ export function useLogin() {
           }),
         });
       }
-      
-      return data
+
+      return data;
     },
     onSuccess: (data: AuthResponse) => {
-      setUser(data.user)
-      queryClient.invalidateQueries({ queryKey: ['user'] })
-      queryClient.setQueryData(['user'], data.user)
+      setUser(data.user);
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.setQueryData(["user"], data.user);
     },
     onError: () => {
-      useAuthStore.getState().clearAuth()
+      useAuthStore.getState().clearAuth();
     },
     onSettled: () => {
-      setLoading(false)
+      setLoading(false);
     },
-  })
+  });
 }
 
 // Register mutation
 export function useRegister() {
-  const { setLoading } = useAuthStore()
+  const { setLoading } = useAuthStore();
 
-  return useMutation<{is_new_user: boolean, message: string, request_id: string, user_id: string}, ApiError, RegisterData>({
+  return useMutation<
+    {
+      is_new_user: boolean;
+      message: string;
+      request_id: string;
+      user_id: string;
+    },
+    ApiError,
+    RegisterData
+  >({
     mutationFn: async (userData: RegisterData) => {
-      setLoading(true)
-      const { data } = await api.post<{is_new_user: boolean, message: string, request_id: string, user_id: string}>('/register', userData, {
+      setLoading(true);
+      const { data } = await api.post<{
+        is_new_user: boolean;
+        message: string;
+        request_id: string;
+        user_id: string;
+      }>("/register", userData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      return data
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return data;
     },
     onSuccess: () => {
       // Optional: Auto-login after registration
       // useAuthStore.getState().setUser(data.user)
     },
     onSettled: () => {
-      setLoading(false)
+      setLoading(false);
     },
-  })
+  });
 }
 
 // Get current user
 export function useUser() {
-  const { user, setUser } = useAuthStore()
+  const { user, setUser } = useAuthStore();
 
   const query = useQuery<User | null, ApiError>({
-    queryKey: ['user'],
+    queryKey: ["user"],
     queryFn: async (): Promise<User | null> => {
       try {
         // First verify the session via our cookie-based API
-        const sessionRes = await fetch('/api/auth/verify');
+        const sessionRes = await fetch("/api/auth/verify");
         const session = await sessionRes.json();
-        
+
         if (!session.authenticated) {
           return null;
         }
-        
+
         // If authenticated, fetch full user data from backend
-        const { data } = await api.get<{ user: User }>('/me');
+        const { data } = await api.get<{ user: User }>("/me");
         return data.user;
       } catch {
         return null;
@@ -115,107 +130,124 @@ export function useUser() {
     retry: false,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
-  })
+  });
 
   // Update Zustand store when query data changes
   if (query.data && query.data !== user) {
-    setUser(query.data)
+    setUser(query.data);
   }
 
-  return query
+  return query;
 }
-
 
 // Forgot password
 export function useForgotPassword() {
-  return useMutation<{ message: string, request_id: string }, ApiError, ForgetPassData>({
-    mutationFn: async (forgetPassData : ForgetPassData) => {
-      const { data } = await api.post<{ message: string, request_id: string }>('/forget-password', forgetPassData,{
-        headers: {
-          'Content-Type': 'multipart/form-data'
+  return useMutation<
+    { message: string; request_id: string },
+    ApiError,
+    ForgetPassData
+  >({
+    mutationFn: async (forgetPassData: ForgetPassData) => {
+      const { data } = await api.post<{ message: string; request_id: string }>(
+        "/forget-password",
+        forgetPassData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
-      })
-      return data
+      );
+      return data;
     },
-  })
+  });
 }
 
 // Reset password
 export function useResetPassword() {
   return useMutation<{ message: string }, ApiError, ResetPasswordData>({
-    mutationFn: async ( resetData: ResetPasswordData) => {
-      const { data } = await api.post<{ message: string }>('/forget-password/reset', resetData,{
-        headers: {
-          'Content-Type': 'multipart/form-data'
+    mutationFn: async (resetData: ResetPasswordData) => {
+      const { data } = await api.post<{ message: string }>(
+        "/forget-password/reset",
+        resetData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
-      })
-      return data
+      );
+      return data;
     },
-  })
+  });
 }
 
 // Verify email
 export function useVerify() {
   return useMutation<AuthResponse, ApiError, FormData>({
     mutationFn: async (verifyData: VerificationData) => {
-      const { data } = await api.post<AuthResponse>('/verify', verifyData, {
+      const { data } = await api.post<AuthResponse>("/verify", verifyData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      return data
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return data;
     },
     onSuccess: (data: AuthResponse) => {
-      useAuthStore.getState().setUser(data.user)
+      useAuthStore.getState().setUser(data.user);
     },
-  })
+  });
 }
-
 
 // Resend verification email
 export function useResendOTP() {
   return useMutation<{ message: string }, ApiError, ResendData>({
     mutationFn: async (resendData: ResendData) => {
-      const { data } = await api.post<{ message: string }>('/resend-otp',resendData ,{
-        headers: {
-          'Content-Type': 'multipart/form-data'
+      const { data } = await api.post<{ message: string }>(
+        "/resend-otp",
+        resendData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
-      })
-      return data
+      );
+      return data;
     },
-  })
+  });
 }
 
 // Logout mutation
 export function useLogout() {
-  const queryClient = useQueryClient()
-  const { clearAuth } = useAuthStore()
+  const queryClient = useQueryClient();
+  const { clearAuth } = useAuthStore();
 
   return useMutation<void, ApiError, void>({
     mutationFn: async (): Promise<void> => {
-      // Call our API route to clear cookies
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      // Also call backend logout if needed
       try {
-        await api.get('/logout');
+        await api.get("/logout", {
+          withCredentials: true,
+        });
       } catch {
-        // Continue even if backend logout fails
+        console.error(
+          "Backend logout failed, proceeding to clear client session."
+        );
+      } finally {
+        // Call our API route to clear cookies
+        await fetch("/api/auth/logout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
       }
     },
     onSuccess: () => {
-      clearAuth()
-      queryClient.clear() // Clear all queries
+      clearAuth();
+      queryClient.clear(); // Clear all queries
     },
     onError: () => {
       // Even if API call fails, clear local auth
-      clearAuth()
-      queryClient.clear()
+      clearAuth();
+      queryClient.clear();
     },
-  })
+  });
 }
