@@ -5,7 +5,6 @@ import { Inter, Public_Sans } from "next/font/google";
 import { useSearchParams } from "next/navigation";
 import { useCountdownTimer } from "@/lib/timer";
 import { useRouter } from "next/navigation";
-import { useVerify } from "@/hooks/useAuth";
 import { useResendOTP } from "@/hooks/useAuth";
 
 import {
@@ -41,7 +40,7 @@ const VerifyOTPContent = () => {
     startCountdown();
   }, []);
 
-  const { mutate: verify, isPending } = useVerify();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   const params = useSearchParams();
@@ -59,23 +58,38 @@ const VerifyOTPContent = () => {
       setOtpIncomplete(false);
     }
 
-    const verificationData = new FormData();
-    verificationData.append("credential", emailOrPhone);
-    verificationData.append("code", otp);
-    verificationData.append("method", isPhoneInput ? "phone" : "email");
-    verificationData.append("password_reset", "yes");
-    verificationData.append("request_id", requestId);
+    setIsSubmitting(true);
 
-    verify(verificationData, {
-      onSuccess: (data) => {
+    // For password reset flow, use our API route to handle the cookie
+    const verificationData = new FormData();
+    verificationData.append('credential', emailOrPhone);
+    verificationData.append('code', otp);
+    verificationData.append('method', isPhoneInput ? 'phone' : 'email');
+    verificationData.append('request_id', requestId);
+
+    // will handle the password_reset_token cookie
+    fetch('/api/auth/verify-reset', {
+      method: 'POST',
+      body: verificationData,
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Verification failed');
+        }
+        return response.json();
+      })
+      .then((data) => {
         router.push(`/forgot-password/reset?identifier=${emailOrPhone}`);
         console.log("Verify OTP Success:", data);
-      },
-      onError: (error) => {
+      })
+      .catch((error) => {
         setOtpError(true);
         console.error("Verify OTP Error:", error);
-      },
-    });
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   const resendOtp = useResendOTP();
@@ -160,10 +174,10 @@ const VerifyOTPContent = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={isPending}
+          disabled={isSubmitting}
           className={`w-full mt-0 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] shadow-xs shadow-[#0A0D120D] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-sm disabled:opacity-50 cursor-pointer`}
         >
-          {isPending ? (
+          {isSubmitting ? (
             <LoaderCircle className="mx-auto animate-spin size-5 text-[#39089D]" />
           ) : (
             " Verify"

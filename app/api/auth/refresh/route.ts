@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
-import { getRefreshToken, setAuthCookies } from '@/lib/auth/cookies';
-import axios from 'axios';
+import { NextResponse } from "next/server";
+import { getRefreshToken, setAuthCookies } from "@/lib/auth/cookies";
+import axios from "axios";
 
 /**
  * POST /api/auth/refresh
@@ -14,27 +14,21 @@ export async function POST() {
 
     if (!refreshToken) {
       return NextResponse.json(
-        { error: 'No refresh token found' },
+        { error: "No refresh token found" },
         { status: 401 }
       );
     }
 
     // Call backend to refresh token
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/refresh`,
-      { refresh_token: refreshToken },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/refresh`, { withCredentials: true }
     );
 
     const { access_token, refresh_token: newRefreshToken } = response.data.data;
 
     if (!access_token) {
       return NextResponse.json(
-        { error: 'Failed to refresh token' },
+        { error: "Failed to refresh token" },
         { status: 401 }
       );
     }
@@ -49,25 +43,25 @@ export async function POST() {
     return NextResponse.json(
       {
         success: true,
-        message: 'Token refreshed successfully',
+        message: "Token refreshed successfully",
       },
       { status: 200 }
     );
   } catch (error: unknown) {
-    console.error('Token refresh error:', error);
-    
+    console.error("Token refresh error:", error);
+
     // If refresh fails, token is invalid - clear cookies
-    const { clearAuthCookies } = await import('@/lib/auth/cookies');
+    const { clearAuthCookies } = await import("@/lib/auth/cookies");
     await clearAuthCookies();
 
-    let errorMessage = 'Unknown error';
-    if (error && typeof error === 'object' && 'response' in error) {
+    let errorMessage = "Unknown error";
+    if (error && typeof error === "object" && "response" in error) {
       const response = error.response as { data?: { message?: string } };
-      errorMessage = response.data?.message || 'Unknown error';
+      errorMessage = response.data?.message || "Unknown error";
     }
 
     return NextResponse.json(
-      { error: 'Token refresh failed', details: errorMessage },
+      { error: "Token refresh failed", details: errorMessage },
       { status: 401 }
     );
   }

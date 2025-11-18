@@ -235,7 +235,7 @@ const Login = () => {
 
       <Link
         href="/forgot-password"
-        className={`mt-4 ${inter.variable} block text-center text-[10px]! text-[#EE5833] font-normal!`}
+        className={`mt-4 ${inter.variable} block text-center text-[10px]! text-[#312ECB] font-normal!`}
       >
         Forgot Password?
       </Link>

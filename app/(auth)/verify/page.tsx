@@ -4,7 +4,6 @@ import { useState, useEffect, Suspense } from "react";
 import { Inter, Public_Sans } from "next/font/google";
 import { useSearchParams } from "next/navigation";
 import { useCountdownTimer } from "@/lib/timer";
-import { useVerify } from "@/hooks/useAuth";
 import { useResendOTP } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
@@ -38,7 +37,7 @@ const VerifyContent = () => {
   const { formattedTime, isZero, startCountdown, restartCountdown } =
     useCountdownTimer();
 
-  const { mutate: verify, isPending } = useVerify();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   const params = useSearchParams();
@@ -78,23 +77,38 @@ const VerifyContent = () => {
       setOtpIncomplete(false);
     }
 
+    setIsSubmitting(true);
+
     const verificationData = new FormData();
     verificationData.append("credential", emailOrPhone);
     verificationData.append("code", otp);
     verificationData.append("method", isPhoneInput ? "phone" : "email");
-    verificationData.append("password_reset", "no");
     verificationData.append("request_id", requestId);
 
-    verify(verificationData, {
-      onSuccess: (data) => {
-        router.push("/login");
+    // will handle token extraction and storage
+    fetch('/api/auth/verify-signup', {
+      method: 'POST',
+      body: verificationData,
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Verification failed');
+        }
+        return response.json();
+      })
+      .then((data) => {
         console.log("Verify OTP Success:", data);
-      },
-      onError: (error) => {
+        // Redirect to dashboard if authenticated, otherwise to login
+        router.push(data.authenticated ? "/dashboard" : "/login");
+      })
+      .catch((error) => {
         setOtpError(true);
         console.error("Verify OTP Error:", error);
-      },
-    });
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   return (
@@ -161,10 +175,10 @@ const VerifyContent = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={isPending}
+          disabled={isSubmitting}
           className={`w-full mt-0 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] shadow-xs shadow-[#0A0D120D] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-sm disabled:opacity-50 cursor-pointer`}
         >
-          {isPending ? (
+          {isSubmitting ? (
             <LoaderCircle className="mx-auto animate-spin size-5 text-[#39089D]" />
           ) : (
             " Verify"

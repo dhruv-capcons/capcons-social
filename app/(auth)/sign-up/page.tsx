@@ -38,6 +38,8 @@ const SignUp = () => {
 
   const [isPasswordMismatch, setPasswordMismatch] = useState(false);
   const [isPasswordValid, setPasswordValid] = useState<null | boolean>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  
 
   const [errors, setErrors] = useState<string[]>([]);
 
@@ -61,6 +63,14 @@ const SignUp = () => {
 
   const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check if terms are accepted
+    if (!termsAccepted) {
+      setErrors(["You must accept the Terms & Conditions to continue"]);
+      return;
+    } else {
+      setErrors([]);
+    }
 
     const { errors: passwordErrors, isValid } = validatePassword(
       formData.password
@@ -90,8 +100,8 @@ const SignUp = () => {
 
     registerData.append("credential", formData.emailOrPhone.trim());
     registerData.append("password", formData.password?.trim());
-    registerData.append("country_code", formData.countryCode);
-    // registerData.append("circle_id", "default_circle");
+    if(isPhoneInput) registerData.append("country_code", formData.countryCode.trim());
+    registerData.append("circle_id", "674e9cf6477a49f180248d72");
 
     register(registerData, {
       onSuccess: (data) => {
@@ -249,11 +259,21 @@ const SignUp = () => {
         </p>}
 
         {/* Terms and Conditions Checkbox */}
-        <div className="flex items-center gap-2">
-          <input type="checkbox" name="" id="" className="size-2.5" />
-          <p
-            className={`${inter.variable} text-[10px]! font-light! leading-3!`}
-          >
+        <div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="terms&privacy"
+              checked={termsAccepted}
+              onChange={(e) => {
+                setTermsAccepted(e.target.checked);
+                if (e.target.checked) setErrors([]);
+              }}
+              className={`size-2.5 cursor-pointer accent-[#34AAFF]`}
+            />
+            <label htmlFor="terms&privacy"
+              className={`${inter.variable} text-[10px]! font-light! leading-3!`}
+            >
             I agree to the{" "}
             <Link
               href="https://capcons.com/terms"
@@ -270,7 +290,9 @@ const SignUp = () => {
             >
               Privacy Policy
             </Link>{" "}
-          </p>
+          </label>
+          </div>
+        
         </div>
 
         {/* Submit Button */}

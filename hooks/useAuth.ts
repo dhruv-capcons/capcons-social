@@ -215,6 +215,50 @@ export function useResendOTP() {
   });
 }
 
+export function useGetUser() {
+  return useQuery<User | null, ApiError>({
+    queryKey: ["user-details"],
+    queryFn: async (): Promise<User | null> => {
+      try {
+        // Try to fetch user details with credentials (uses cookies)
+        const { data } = await api.get<{
+          data: User | PromiseLike<User | null> | null; user: User 
+}>("/user-details", {
+          withCredentials: true,
+        });
+        return data.data;
+      } catch {
+        // If request fails (likely due to expired token), try refreshing
+        try {
+          const refreshResponse = await fetch("/api/auth/refresh", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (refreshResponse.ok) {
+            // Token refreshed successfully, retry the original request
+            const { data } = await api.get<{ user: User }>("/user-details", {
+              withCredentials: true,
+            });
+            return data.user;
+          } else {
+            // Refresh failed, user needs to login again
+            return null;
+          }
+        } catch {
+          // Refresh failed, user needs to login again
+          return null;
+        }
+      }
+    },
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+}
+
 // Logout mutation
 export function useLogout() {
   const queryClient = useQueryClient();
