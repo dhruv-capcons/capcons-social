@@ -126,7 +126,7 @@ export default function RootLayout({
                 </p>
               </div>
 
-              <div className="w-full sm:min-w-110 sm:max-w-110 h-screen! xmd:h-auto! xmd:max-h-[91.5vh]! bg-white rounded-lg xmd:flex-1! p-6 px-12 flex flex-col justify-start overflow-y-hidden!">
+              <div className="w-full sm:min-w-110 sm:max-w-110 h-screen! xmd:h-full xmd:max-h-[91.5vh]! bg-white rounded-lg xmd:flex-1! p-6 px-12 flex flex-col justify-start overflow-y-hidden!">
                 <div className="shrink-0">
                   <Link href="/sign-up">
                     <Image
