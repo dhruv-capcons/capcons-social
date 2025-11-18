@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Open_Sans } from "next/font/google";
 import "./globals.css";
 import { IMAGES } from "@/lib/images";
-import Image from "next/image";
 import QueryProvider from "@/components/QueryProvider";
-import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({

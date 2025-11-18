@@ -3,7 +3,6 @@ import { Inter, Open_Sans } from "next/font/google";
 import "../globals.css";
 import { IMAGES } from "@/lib/images";
 import Image from "next/image";
-import QueryProvider from "@/components/QueryProvider";
 import Link from "next/link";
 import { Analytics } from '@vercel/analytics/next';
 
@@ -99,8 +98,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${openSans.variable} antialiased`}>
-        <QueryProvider>
-          <div className="min-h-screen max-h-screen overflow-hidden w-full">
+          <div className="h-screen w-full overflow-hidden">
             <Image
               src="/authbg.png"
               alt="Auth Background"
@@ -116,7 +114,7 @@ export default function RootLayout({
               className="absolute inset-0 z-40 hidden xmd:block"
             />
 
-            <div className="min-h-screen relative z-50 overflow-hidden w-full flex items-center justify-between xmd:justify-between xmd:items-start xmd:p-10">
+            <div className="h-full relative z-50 w-full flex items-center justify-center xmd:justify-between xmd:items-start xmd:p-10">
               <div className="text-white hidden xmd:block self-end max-w-3xl space-y-6 mb-8 ml-5">
                 <p className={`text-[45px]! ${openSans.variable} leading-14! `}>
                   Hear And Share Stories With <br /> Circles That Share Your
@@ -128,11 +126,8 @@ export default function RootLayout({
                 </p>
               </div>
 
-              <div
-                style={{ height: "-webkit-fill-available" }}
-                className="sm:min-w-110 max-w-110 max-h-[91.5vh] bg-green-500 rounded-lg flex-1 p-6 px-12 flex flex-col justify-start"
-              >
-                <div>
+              <div className="w-full sm:min-w-110 sm:max-w-110 h-screen! xmd:h-auto xmd:max-h-[91.5vh] bg-green-500 rounded-lg xmd:flex-1 p-6 px-12 flex flex-col justify-start overflow-y-auto">
+                <div className="shrink-0">
                   <Link href="/sign-up">
                     <Image
                       src="/capconsvg.svg"
@@ -144,17 +139,13 @@ export default function RootLayout({
                     />
                   </Link>
                 </div>
-                <div
-                  style={{ height: "-webkit-fill-available" }}
-                  className="flex items-center text-black"
-                >
+                <div className="flex-1 flex items-center text-black min-h-0">
                   {children}
                   <Analytics />
                 </div>
               </div>
             </div>
           </div>
-        </QueryProvider>
       </body>
     </html>
   );
