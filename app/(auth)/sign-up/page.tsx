@@ -240,21 +240,19 @@ const SignUp = () => {
         </div>
 
         {/* Password Mismatch & Error */}
-        {/* <p
+        {isPasswordMismatch || errors.length > 0  && <p
           className={`text-[#EE5833] font-medium! ${
             inter.variable
-          } text-[10px]! -mt-2 ml-1 ${
-            isPasswordMismatch || errors.length > 0 ? "" : "invisible"
-          }`}
+          } text-[10px]! -mt-2 ml-1`}
         >
           {errors.length > 0 ? <>{errors[0]}</> : "Passwords do not match"}
-        </p> */}
+        </p>}
 
         {/* Terms and Conditions Checkbox */}
         <div className="flex items-center gap-2">
-          <input type="checkbox" name="" id="" className="size-2.5 bo" />
+          <input type="checkbox" name="" id="" className="size-2.5" />
           <p
-            className={`${inter.variable} text-[8.3px]! font-light! leading-3!`}
+            className={`${inter.variable} text-[10px]! font-light! leading-3!`}
           >
             I agree to the{" "}
             <Link

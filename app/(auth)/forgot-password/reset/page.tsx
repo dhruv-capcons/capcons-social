@@ -84,6 +84,7 @@ const ResetPasswordContent = () => {
 
     resetPassword(resetData, {
       onSuccess: (data) => {
+        router.push("/login");
         console.log("Reset Password Success:", data);
       },
       onError: (error) => {
@@ -107,7 +108,7 @@ const ResetPasswordContent = () => {
           Reset Password
         </p>
         <p className={`${inter.variable} font-inter text-[11px]! font-normal`}>
-          Please type something you’ll remember
+          Please type something you&apos;ll remember
         </p>
       </div>
 
@@ -121,7 +122,7 @@ const ResetPasswordContent = () => {
             value={formData.newPassword}
             onChange={handleInputChange}
             placeholder="Enter New Password"
-            className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border rounded-xl placeholder-[#5A5A5A] transition-all duration-200 ${
+            className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border rounded-xl placeholder-[#5A5A5A] transition-all duration-200 focus:border-[#39089D] ${
               passwordMismatch || isPasswordValid === false
                 ? "border-[#EE5833]"
                 : "border-[#D9D9D9]"
@@ -148,7 +149,7 @@ const ResetPasswordContent = () => {
             value={formData.confirmPassword}
             onChange={handleInputChange}
             placeholder="Confirm New Password"
-            className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border rounded-xl placeholder-[#5A5A5A] transition-all duration-200 ${
+            className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border rounded-xl focus:border-[#39089D] placeholder-[#5A5A5A] transition-all duration-200 ${
               passwordMismatch ? "border-[#EE5833]" : "border-[#D9D9D9]"
             }`}
           />
@@ -166,15 +167,13 @@ const ResetPasswordContent = () => {
         </div>
 
         {/* Password Mismatch & Error */}
-        <p
+        {passwordMismatch || errors.length > 0 &&<p
           className={`text-[#EE5833] font-medium! ${
             inter.variable
-          } text-[10px]! -mt-2 ml-1 ${
-            passwordMismatch || errors.length > 0 ? "" : "invisible"
-          }`}
+          } text-[10px]! -mt-2 ml-1`}
         >
           {errors.length > 0 ? <>{errors[0]}</> : "Passwords do not match"}
-        </p>
+        </p>}
 
         {/* Submit Button */}
         <button

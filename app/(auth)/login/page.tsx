@@ -6,6 +6,7 @@ import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import Link from "next/link";
 import { validatePassword } from "@/lib/validations";
 import { useLogin } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -31,10 +32,10 @@ const Login = () => {
 
   const [isPasswordValid, setPasswordValid] = useState<null | boolean>(null);
   const [errors, setErrors] = useState<string[]>([]);
-
   const [rememberMe, setRememberMe] = useState(false);
 
   const { mutate: login, isPending } = useLogin();
+  const router = useRouter();
 
   const handleInputChange = (
     e:
@@ -84,6 +85,7 @@ const Login = () => {
 
     login(loginData, {
       onSuccess: (data) => {
+        router.push("/dashboard");
         console.log("Login Success:", data);
       },
       onError: (error) => {
@@ -201,12 +203,12 @@ const Login = () => {
         )}
 
         {/* remember Me Checkbox */}
-        <div className="flex items-start gap-2">
+        <div className="flex items-center gap-2">
           <input
             type="checkbox"
             name="rememberMe"
             id="rememberMe"
-            className="size-3"
+            className="size-2.5"
             checked={rememberMe}
             onChange={() => setRememberMe(!rememberMe)}
           />

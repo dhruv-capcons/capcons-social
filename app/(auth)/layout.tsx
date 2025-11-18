@@ -100,10 +100,16 @@ export default function RootLayout({
       <body className={`${inter.variable} ${openSans.variable} antialiased`}>
           <div className="min-h-svh w-full overflow-hidden">
             <Image
-              src="/authbg.png"
+              src="/bgg-auth.png"
               alt="Auth Background"
               layout="fill"
-              className="object-cover object-center -z-10 relative hidden xmd:block"
+              className="object-cover object-center -z-10 relative hidden  xl:block"
+            />
+            <Image
+              src="/bg-auth.jpg"
+              alt="Auth Background"
+              layout="fill"
+              className="object-cover object-center -z-10 relative hidden xmd:block xl:hidden"
             />
 
             <div
