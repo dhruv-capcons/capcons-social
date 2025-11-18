@@ -36,8 +36,8 @@ export default function DashboardPage() {
         This is a protected page. You can only see this if you&apos;re authenticated.
       </p>
       <div className="bg-muted p-4 rounded-lg">
-        <p className="text-sm font-medium">User ID: {user.user_id}</p>
-        <p className="text-sm">Credential: {user.phone_number}</p>
+        {/* <p className="text-sm font-medium">User ID: {user.user_id}</p>
+        <p className="text-sm">Credential: {user.phone_number}</p> */}
       </div>
     </div>
   );
