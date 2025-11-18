@@ -7,6 +7,12 @@
   --breakpoint-xmd: 957px;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
 @theme {
   --color-primary-900: #42307d;
   --color-primary-800: #53389e;

@@ -4,7 +4,7 @@ import "../globals.css";
 import { IMAGES } from "@/lib/images";
 import Image from "next/image";
 import Link from "next/link";
-import { Analytics } from '@vercel/analytics/next';
+
 
 const inter = Inter({
   variable: "--font-inter",
@@ -126,8 +126,8 @@ export default function RootLayout({
                 </p>
               </div>
 
-              <div className="w-full sm:min-w-110 sm:max-w-110 h-screen! xmd:h-full xmd:max-h-[91.5vh]! bg-white rounded-lg xmd:flex-1! p-6 px-12 flex flex-col justify-start overflow-y-hidden!">
-                <div className="shrink-0">
+              <div className="w-full sm:min-w-110 sm:max-w-110 h-full xmd:max-h-[91.5vh]! bg-amber-600 rounded-lg xmd:flex-1! p-6 px-12 flex flex-col justify-start">
+                <div className="shrink-0!">
                   <Link href="/sign-up">
                     <Image
                       src="/capconsvg.svg"
@@ -139,9 +139,8 @@ export default function RootLayout({
                     />
                   </Link>
                 </div>
-                <div className="flex-1 flex items-center text-black min-h-0">
+                <div className="flex-1 flex items-center text-black overflow-auto">
                   {children}
-                  <Analytics />
                 </div>
               </div>
             </div>
