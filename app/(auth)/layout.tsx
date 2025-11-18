@@ -130,7 +130,7 @@ export default function RootLayout({
 
               <div
                 style={{ height: "-webkit-fill-available" }}
-                className="sm:min-w-110 max-w-110 max-h-[91.5vh] bg-white rounded-lg flex-1 p-6 px-12 flex flex-col justify-start"
+                className="sm:min-w-110 max-w-110 max-h-[91.5vh] bg-green-500 rounded-lg flex-1 p-6 px-12 flex flex-col justify-start"
               >
                 <div>
                   <Link href="/sign-up">
