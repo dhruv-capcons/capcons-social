@@ -116,7 +116,7 @@ export default function RootLayout({
               className="absolute inset-0 z-40 hidden xmd:block"
             />
 
-            <div className="h-[97vh] sm:min-h-screen relative z-50 overflow-hidden w-full flex items-center justify-center xmd:justify-between xmd:items-start xmd:p-10">
+            <div className="min-h-screen relative z-50 overflow-hidden w-full flex items-center justify-between xmd:justify-between xmd:items-start xmd:p-10">
               <div className="text-white hidden xmd:block self-end max-w-3xl space-y-6 mb-8 ml-5">
                 <p className={`text-[45px]! ${openSans.variable} leading-14! `}>
                   Hear And Share Stories With <br /> Circles That Share Your
