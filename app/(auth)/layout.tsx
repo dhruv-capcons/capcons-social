@@ -100,7 +100,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${openSans.variable} antialiased`}>
         <QueryProvider>
-          <div className="min-h-screen overflow-hidden w-full">
+          <div className="min-h-screen max-h-screen overflow-hidden w-full">
             <Image
               src="/authbg.png"
               alt="Auth Background"
@@ -116,7 +116,7 @@ export default function RootLayout({
               className="absolute inset-0 z-40 hidden xmd:block"
             />
 
-            <div className="min-h-screen w-full flex items-center xmd:items-start justify-center xmd:justify-between relative z-50 xmd:p-10">
+            <div className="min-h-screen max-h-screen relative z-50 overflow-hidden w-full flex items-center justify-center xmd:justify-between xmd:items-start xmd:p-10">
               <div className="text-white hidden xmd:block self-end max-w-3xl space-y-6 mb-8 ml-5">
                 <p className={`text-[45px]! ${openSans.variable} leading-14! `}>
                   Hear And Share Stories With <br /> Circles That Share Your
@@ -135,7 +135,7 @@ export default function RootLayout({
                 <div>
                   <Link href="/sign-up">
                     <Image
-                      src="https://assets.capcons.com/images/logo-footer.png"
+                      src="/capconsvg.svg"
                       alt="Capcons logo"
                       width={200}
                       height={52}

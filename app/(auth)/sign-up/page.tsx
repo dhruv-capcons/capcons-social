@@ -239,7 +239,7 @@ const SignUp = () => {
         </div>
 
         {/* Password Mismatch & Error */}
-         <p
+         {/* <p
           className={`text-[#EE5833] font-medium! ${
             inter.variable
           } text-[10px]! -mt-2 ml-1 ${
@@ -247,21 +247,21 @@ const SignUp = () => {
           }`}
         >
           {errors.length > 0 ? <>{errors[0]}</> : "Passwords do not match"}
-        </p>
+        </p> */}
 
 
         {/* Terms and Conditions Checkbox */}
-        <div className="flex items-start gap-2">
-          <input type="checkbox" name="" id="" className="size-3" />
+        <div className="flex items-center gap-2">
+          <input type="checkbox" name="" id="" className="size-2.5 bo" />
           <p
-            className={`${inter.variable} text-[10px]! font-light! leading-3!`}
+            className={`${inter.variable} text-[8.3px]! font-light! leading-3!`}
           >
             I agree to the{" "}
-            <Link href="/terms" className="underline text-blue-700">
+            <Link href="https://capcons.com/terms" target="_blank" className="underline text-blue-700">
               Terms & Conditions
             </Link>{" "}
             and{" "}
-            <Link href="/terms" className="underline text-blue-700">
+            <Link href="https://capcons.com/privacy" target="_blank" className="underline text-blue-700">
               Privacy Policy
             </Link>{" "}
           </p>
