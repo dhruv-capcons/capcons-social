@@ -105,7 +105,7 @@ const VerifyOTPContent = () => {
           Please verify OTP
         </p>
         <p className={`${inter.variable} font-inter text-[11px]! font-normal leading-3.5!`}>
-          We’ve sent an email to{" "}
+          We&apos;ve sent an email to{" "}
           <span className="font-semibold!">{emailOrPhone}</span>, please enter
           the code below.
         </p>
