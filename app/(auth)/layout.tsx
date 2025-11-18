@@ -98,7 +98,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${openSans.variable} antialiased`}>
-          <div className="h-screen w-full overflow-hidden">
+          <div className="min-h-svh w-full overflow-hidden">
             <Image
               src="/authbg.png"
               alt="Auth Background"
@@ -126,7 +126,7 @@ export default function RootLayout({
                 </p>
               </div>
 
-              <div className="w-full sm:min-w-110 sm:max-w-110 h-full xmd:max-h-[91.5svh]! bg-amber-600 rounded-lg xmd:flex-1! p-6 px-12 flex flex-col justify-start">
+              <div className="w-full sm:min-w-110 sm:max-w-110 h-full rounded-lg bg-white xmd:flex-1! p-6 px-12 flex flex-col justify-start  min-h-[calc(100svh-100px)]">
                 <div className="shrink-0!">
                   <Link href="/sign-up">
                     <Image
@@ -134,7 +134,7 @@ export default function RootLayout({
                       alt="Capcons logo"
                       width={200}
                       height={52}
-                      className="h-10 w-auto"
+                      className="h-10 w-auto mb-15 xmd:mb-0"
                       unoptimized
                     />
                   </Link>
