@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, Suspense} from "react";
+import React, { useState, Suspense } from "react";
 import { Inter, Public_Sans } from "next/font/google";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { validatePassword } from "@/lib/validations";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -38,7 +38,7 @@ const ResetPasswordContent = () => {
   const params = useSearchParams();
   const emailOrPhone = params?.get("identifier") || "";
 
-  const resetPassword = useResetPassword();
+  const { mutate: resetPassword, isPending } = useResetPassword();
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,12 +82,14 @@ const ResetPasswordContent = () => {
     resetData.append("credential", emailOrPhone);
     resetData.append("new_password", formData.newPassword);
 
-    resetPassword.mutate(resetData, {
+    resetPassword(resetData, {
       onSuccess: (data) => {
         console.log("Reset Password Success:", data);
       },
       onError: (error) => {
-        setErrors([String(error?.response?.data?.message) || "An error occurred"]);
+        setErrors([
+          String(error?.response?.data?.message) || "An error occurred",
+        ]);
         console.error("Reset Password Error:", error);
       },
     });
@@ -177,9 +179,14 @@ const ResetPasswordContent = () => {
         {/* Submit Button */}
         <button
           type="submit"
+          disabled={isPending}
           className={`w-full mt-6 ${inter.variable} bg-[#39089D] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-xs! cursor-pointer`}
         >
-          Confirm Password
+          {isPending ? (
+            <LoaderCircle className="mx-auto animate-spin size-5 text-[#39089D]" />
+          ) : (
+            " Confirm Password"
+          )}
         </button>
       </form>
 
@@ -198,7 +205,6 @@ const ResetPasswordContent = () => {
     </div>
   );
 };
-
 
 const ResetPassword = () => {
   return (

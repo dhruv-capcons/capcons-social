@@ -14,6 +14,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import Link from "next/link";
+import { LoaderCircle } from "lucide-react";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -40,7 +41,7 @@ const VerifyOTPContent = () => {
     startCountdown();
   }, []);
 
-  const verify = useVerify();
+  const { mutate: verify, isPending } = useVerify();
   const router = useRouter();
 
   const params = useSearchParams();
@@ -65,7 +66,7 @@ const VerifyOTPContent = () => {
     verificationData.append("password_reset", "yes");
     verificationData.append("request_id", requestId);
 
-    verify.mutate(verificationData, {
+    verify(verificationData, {
       onSuccess: (data) => {
         router.push(`/forgot-password/reset?identifier=${emailOrPhone}`);
         console.log("Verify OTP Success:", data);
@@ -75,13 +76,11 @@ const VerifyOTPContent = () => {
         console.error("Verify OTP Error:", error);
       },
     });
-
   };
 
   const resendOtp = useResendOTP();
 
   const handleResendCode = () => {
-
     const resendData = new FormData();
     resendData.append("request_id", requestId);
     resendData.append("circle_id", "default_circle");
@@ -95,7 +94,6 @@ const VerifyOTPContent = () => {
         console.error("Resend OTP Error:", error);
       },
     });
-
   };
 
   return (
@@ -162,15 +160,20 @@ const VerifyOTPContent = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className={`w-full mt-0 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-sm disabled:opacity-50 cursor-pointer`}
+          disabled={isPending}
+          className={`w-full mt-0 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] shadow-xs shadow-[#0A0D120D] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-sm disabled:opacity-50 cursor-pointer`}
         >
-          Verify
+          {isPending ? (
+            <LoaderCircle className="mx-auto animate-spin size-5 text-[#39089D]" />
+          ) : (
+            " Verify"
+          )}
         </button>
       </form>
 
       {/* Resend OTP Link */}
       <p
-        className={`text-[11px]! ${inter.variable}  font-medium text-center mt-2 cursor-pointer `}
+        className={`text-[11px]! ${inter.variable}  font-medium text-center mt-4 cursor-pointer `}
       >
         {isZero ? (
           <>
@@ -178,7 +181,7 @@ const VerifyOTPContent = () => {
               onClick={handleResendCode}
               className="hover:underline cursor-pointer"
             >
-              Resend code
+              {resendOtp.isPending ? "Resending..."  : "Resend code"}
             </button>
           </>
         ) : (

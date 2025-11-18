@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Inter, Public_Sans } from "next/font/google";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRegister } from "@/hooks/useAuth";
@@ -29,7 +29,7 @@ const SignUp = () => {
     confirmPassword: "",
   });
 
-  const register = useRegister();
+  const { mutate: register, isPending } = useRegister();
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -93,15 +93,16 @@ const SignUp = () => {
     registerData.append("country_code", formData.countryCode);
     // registerData.append("circle_id", "default_circle");
 
-    register.mutate(registerData, {
+    register(registerData, {
       onSuccess: (data) => {
-        router.push(`/verify?identifier=${formData.emailOrPhone}&request_id=${data.request_id}&user_id=${data.user_id}`);
+        router.push(
+          `/verify?identifier=${formData.emailOrPhone}&request_id=${data.request_id}&user_id=${data.user_id}`
+        );
       },
       onError: (error) => {
         console.error("Register Error:", error);
-      },  
+      },
     });
-
   };
 
   return (
@@ -239,7 +240,7 @@ const SignUp = () => {
         </div>
 
         {/* Password Mismatch & Error */}
-         {/* <p
+        {/* <p
           className={`text-[#EE5833] font-medium! ${
             inter.variable
           } text-[10px]! -mt-2 ml-1 ${
@@ -249,7 +250,6 @@ const SignUp = () => {
           {errors.length > 0 ? <>{errors[0]}</> : "Passwords do not match"}
         </p> */}
 
-
         {/* Terms and Conditions Checkbox */}
         <div className="flex items-center gap-2">
           <input type="checkbox" name="" id="" className="size-2.5 bo" />
@@ -257,11 +257,19 @@ const SignUp = () => {
             className={`${inter.variable} text-[8.3px]! font-light! leading-3!`}
           >
             I agree to the{" "}
-            <Link href="https://capcons.com/terms" target="_blank" className="underline text-blue-700">
+            <Link
+              href="https://capcons.com/terms"
+              target="_blank"
+              className="underline text-blue-700"
+            >
               Terms & Conditions
             </Link>{" "}
             and{" "}
-            <Link href="https://capcons.com/privacy" target="_blank" className="underline text-blue-700">
+            <Link
+              href="https://capcons.com/privacy"
+              target="_blank"
+              className="underline text-blue-700"
+            >
               Privacy Policy
             </Link>{" "}
           </p>
@@ -270,9 +278,14 @@ const SignUp = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className={`w-full mt-6 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-xs! cursor-pointer`}
+          disabled={isPending}
+          className={`w-full mt-6 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] shadow-xs shadow-[#0A0D120D] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-xs! cursor-pointer`}
         >
-          Sign Up
+          {isPending ? (
+            <LoaderCircle className="mx-auto animate-spin size-5 text-[#39089D]" />
+          ) : (
+            "Sign Up"
+          )}
         </button>
       </form>
 

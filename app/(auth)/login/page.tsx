@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Inter, Public_Sans } from "next/font/google";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import Link from "next/link";
 import { validatePassword } from "@/lib/validations";
 import { useLogin } from "@/hooks/useAuth";
@@ -23,7 +23,7 @@ const Login = () => {
   const [formData, setFormData] = useState({
     emailOrPhone: "",
     password: "",
-    countryCode: "91"
+    countryCode: "91",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -34,9 +34,13 @@ const Login = () => {
 
   const [rememberMe, setRememberMe] = useState(false);
 
-  const login = useLogin();
+  const { mutate: login, isPending } = useLogin();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const handleInputChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -68,27 +72,27 @@ const Login = () => {
     setErrors([]);
 
     const loginData = new FormData();
-    
+
     loginData.append("credential", formData.emailOrPhone);
     loginData.append("password", formData.password);
     if (isPhoneInput) {
-      loginData.append("country_code", formData.countryCode); 
+      loginData.append("country_code", formData.countryCode);
     }
     if (rememberMe) {
       loginData.append("remember_user", "yes");
     }
 
-
-    login.mutate(loginData,{
+    login(loginData, {
       onSuccess: (data) => {
         console.log("Login Success:", data);
       },
       onError: (error) => {
-        setErrors([error?.response?.data.message || "Login failed. Please try again."]);
+        setErrors([
+          error?.response?.data.message || "Login failed. Please try again.",
+        ]);
         console.error("Login Error:", error);
-      },  
+      },
     });
-
   };
 
   return (
@@ -113,7 +117,12 @@ const Login = () => {
             <div className="flex space-x-2">
               <div className="relative flex items-center backdrop-blur-sm border border-[#D9D9D9] rounded-xl min-w-20">
                 <span className="absolute left-3">🇮🇳</span>
-                <select  value={formData.countryCode} onChange={handleInputChange} name="countryCode" className="w-full bg-transparent border-none outline-none pl-8 pr-8 py-4 text-xs! appearance-none">
+                <select
+                  value={formData.countryCode}
+                  onChange={handleInputChange}
+                  name="countryCode"
+                  className="w-full bg-transparent border-none outline-none pl-8 pr-8 py-4 text-xs! appearance-none"
+                >
                   <option value="91">+91</option>
                   <option value="1">+1</option>
                   <option value="44">+44</option>
@@ -164,7 +173,11 @@ const Login = () => {
             onChange={handleInputChange}
             placeholder="Password"
             className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200 
-              ${isPasswordValid === false ? "border-[#EE5833]" : "border-[#D9D9D9]"}`}
+              ${
+                isPasswordValid === false
+                  ? "border-[#EE5833]"
+                  : "border-[#D9D9D9]"
+              }`}
           />
           <button
             type="button"
@@ -178,14 +191,25 @@ const Login = () => {
             )}
           </button>
         </div>
-        
-         {errors.length > 0 &&  <p className={`text-[#EE5833] font-medium! ${inter.variable} text-[10px]! -mt-2 ml-1 `}>
+
+        {errors.length > 0 && (
+          <p
+            className={`text-[#EE5833] font-medium! ${inter.variable} text-[10px]! -mt-2 ml-1 `}
+          >
             {errors[0]}
-          </p>}
+          </p>
+        )}
 
         {/* remember Me Checkbox */}
         <div className="flex items-start gap-2">
-          <input  type="checkbox" name="rememberMe" id="rememberMe" className="size-3" checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} />
+          <input
+            type="checkbox"
+            name="rememberMe"
+            id="rememberMe"
+            className="size-3"
+            checked={rememberMe}
+            onChange={() => setRememberMe(!rememberMe)}
+          />
           <p
             className={`${inter.variable} text-[10px]! font-light! leading-3!`}
           >
@@ -196,15 +220,20 @@ const Login = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className={`w-full mt-6.5 ${inter.variable} bg-[#39089D] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-xs! cursor-pointer`}
+          disabled={isPending}
+          className={`w-full mt-6.5 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] shadow-xs shadow-[#0A0D120D] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-xs! cursor-pointer`}
         >
-          Login
+          {isPending ? (
+            <LoaderCircle className="mx-auto animate-spin size-5 text-[#39089D]" />
+          ) : (
+            "Login"
+          )}
         </button>
       </form>
 
       <Link
         href="/forgot-password"
-        className={`mt-3 ${inter.variable} block text-center text-[10px]! text-[#EE5833] font-normal!`}
+        className={`mt-4 ${inter.variable} block text-center text-[10px]! text-[#EE5833] font-normal!`}
       >
         Forgot Password?
       </Link>
