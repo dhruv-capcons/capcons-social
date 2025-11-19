@@ -104,12 +104,14 @@ export default function RootLayout({
               alt="Auth Background"
               layout="fill"
               className="object-cover object-center -z-10 relative hidden  xl:block"
+              preload
             />
             <Image
               src="/bg-auth.jpg"
               alt="Auth Background"
               layout="fill"
               className="object-cover object-center -z-10 relative hidden xmd:block xl:hidden"
+              preload
             />
 
             <div
@@ -132,7 +134,7 @@ export default function RootLayout({
                 </p>
               </div>
 
-              <div className="w-full sm:min-w-110 sm:max-w-110 h-full rounded-lg bg-white xmd:flex-1! p-6 px-12 flex flex-col justify-start  min-h-[calc(100svh-100px)]">
+              <div className="w-full sm:min-w-110 sm:max-w-110 h-full rounded-lg bg-white xmd:flex-1! p-6 px-12 flex flex-col justify-start  min-h-[calc(100svh-100px)]  dark:bg-[#0D0D0D] ">
                 <div className="shrink-0!">
                   <Link href="/sign-up">
                     <Image
@@ -140,12 +142,20 @@ export default function RootLayout({
                       alt="Capcons logo"
                       width={200}
                       height={52}
-                      className="h-10 w-auto mb-15 xmd:mb-0"
+                      className="h-10 w-auto mb-15 xmd:mb-0 dark:hidden"
+                      unoptimized
+                    />
+                    <Image
+                      src="/capconsdark.svg"
+                      alt="Capcons logo"
+                      width={200}
+                      height={52}
+                      className="h-10 w-auto mb-15 xmd:mb-0 hidden dark:block"
                       unoptimized
                     />
                   </Link>
                 </div>
-                <div className="flex-1 flex items-center text-black overflow-auto">
+                <div className="flex-1 flex items-center text-black dark:text-[#FFFFFF] overflow-auto">
                   {children}
                 </div>
               </div>

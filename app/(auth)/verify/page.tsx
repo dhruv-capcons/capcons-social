@@ -119,7 +119,7 @@ const VerifyContent = () => {
         >
           Please verify your {isPhoneInput ? "Phone Number" : "Email address"}
         </p>
-        <p className={`${inter.variable} font-inter text-[11px]! font-normal`}>
+        <p className={`${inter.variable} font-inter text-[11px]! font-normal dark:text-[#6C7278]`}>
           We’ve sent an email to{" "}
           <span className="font-semibold!">{emailOrPhone}</span>, please enter
           the code below.
@@ -148,8 +148,8 @@ const VerifyContent = () => {
                   index={index}
                   className={`w-11 h-10 text-lg font-medium rounded-sm border-2 transition-all duration-200 ${
                     otpError
-                      ? "border-red-500! "
-                      : "border-[#D9D9D9] bg-white hover:border-gray-400 focus:border-[#39089D]"
+                      ? "border-red-500! dark:border-[#F7594E]!"
+                      : "border-[#D9D9D9] bg-white hover:border-gray-400 dark:bg-[#0D0D0D]"
                   }`}
                 />
               ))}
@@ -164,7 +164,7 @@ const VerifyContent = () => {
 
           {/* Error Message */}
           <p
-            className={`text-[#F54135] text-xs! font-normal -mt-2 ${
+            className={`text-[#F54135] dark:text-[#F7594E] text-xs! font-normal -mt-2 ${
               !otpError && "invisible"
             }`}
           >
@@ -202,7 +202,7 @@ const VerifyContent = () => {
         ) : (
           <>
             Send code again{" "}
-            <span className="text-[#F52020B2]">{formattedTime}</span>{" "}
+            <span className="text-[#F52020B2] dark:text-[#F7594E]">{formattedTime}</span>{" "}
           </>
         )}
       </p>
@@ -213,7 +213,7 @@ const VerifyContent = () => {
           Already have an account?{" "}
           <Link
             href="/login"
-            className="text-[#39089D] text-[13px]!  font-normal!"
+            className="text-[#39089D] dark:text-[#289DE5] text-[13px]!  font-normal!"
           >
             Log in
           </Link>

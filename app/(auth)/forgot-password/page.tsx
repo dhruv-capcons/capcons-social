@@ -78,7 +78,7 @@ const ForgotPassword = () => {
         >
           Forgot Password?
         </p>
-        <p className={`${inter.variable} font-inter text-[11px]! font-normal`}>
+        <p className={`${inter.variable} font-inter text-[11px]! font-normal dark:text-[#6C7278]`}>
           Trouble while logging in?
         </p>
       </div>
@@ -90,7 +90,7 @@ const ForgotPassword = () => {
         <div className="relative">
           {isPhoneInput ? (
             <div className="flex space-x-2">
-              <div className="relative flex items-center backdrop-blur-sm border border-[#D9D9D9] rounded-xl min-w-20">
+              <div className="relative flex items-center backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333]  rounded-xl min-w-20">
                 <span className="absolute left-3">🇮🇳</span>
                 <select
                   value={formData.countryCode}
@@ -124,7 +124,7 @@ const ForgotPassword = () => {
                 value={formData.emailOrPhone}
                 onChange={handleInputChange}
                 placeholder="9567989902"
-                className="flex-1 px-4 py-4 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200"
+                className="flex-1 px-4 py-4 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333]  rounded-xl  placeholder-[#5A5A5A] transition-all duration-200"
               />
             </div>
           ) : (
@@ -134,7 +134,7 @@ const ForgotPassword = () => {
               value={formData.emailOrPhone}
               onChange={handleInputChange}
               placeholder="Enter Email or Phone Number"
-              className="w-full px-4 py-4 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200"
+              className="w-full px-4 py-4 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200"
             />
           )}
         </div>
@@ -159,7 +159,7 @@ const ForgotPassword = () => {
           Don’t have an account?{" "}
           <Link
             href="/sign-up"
-            className="text-[#39089D] text-[13px]!  font-normal!"
+            className="text-[#39089D] text-[13px]! dark:text-[#289DE5]  font-normal!"
           >
             Sign up
           </Link>

@@ -1,13 +1,15 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+/* @custom-variant dark (&:is(.dark *)); */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --breakpoint-xmd: 957px;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -172,10 +174,14 @@ body {
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  --autofill: #ffffff;
+  --autofill-text-color: #000000;
+  --input-border-color: #39089d;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: #0d0d0d;
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -206,6 +212,17 @@ body {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  --autofill: #0d0d0d;
+  --autofill-text-color: #ffffff;
+  --input-border-color: #4309b6;
+
+  --submit-button-bg: linear-gradient(0deg, #4309b6, #4309b6),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0) 100%
+    );
 }
 
 @layer base {
@@ -436,8 +453,6 @@ body {
   color: inherit;
 }
 
-
-
 /* edge browser eye remove */
 input::-ms-reveal,
 input::-ms-clear {
@@ -448,10 +463,11 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--autofill) inset !important;
+  -webkit-text-fill-color: var(--autofill-text-color) !important;
 }
-
 
 input:focus {
-  border-color: #39089D;
+  border-color: var(--input-border-color);
 }
+

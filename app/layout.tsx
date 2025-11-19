@@ -3,6 +3,7 @@ import { Inter, Open_Sans } from "next/font/google";
 import "./globals.css";
 import { IMAGES } from "@/lib/images";
 import QueryProvider from "@/components/QueryProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
@@ -95,12 +96,34 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body suppressHydrationWarning className={`${inter.variable} ${openSans.variable} antialiased`}>
-        <QueryProvider>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Preload the background image */}
+        <link rel="preload" href="/bg-auth.jpg" as="image" type="image/jpeg" />
+        <link rel="preload" href="/bgg-auth.png" as="image" type="image/jpeg" />
+
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                  document.documentElement.classList.add('dark');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
+      <body
+        suppressHydrationWarning
+        className={`${inter.variable} ${openSans.variable} antialiased`}
+      >
+        <ThemeProvider>
+          <QueryProvider>
             {children}
             <Analytics />
-        </QueryProvider>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

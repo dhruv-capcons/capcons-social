@@ -105,7 +105,7 @@ const Login = () => {
         >
           Welcome Back!👋
         </p>
-        <p className={`${inter.variable} font-inter text-[11px]! font-normal`}>
+        <p className={`${inter.variable} font-inter text-[11px]! font-normal dark:text-[#6C7278]`}>
           Login with your account
         </p>
       </div>
@@ -117,7 +117,7 @@ const Login = () => {
         <div className="relative">
           {isPhoneInput ? (
             <div className="flex space-x-2">
-              <div className="relative flex items-center backdrop-blur-sm border border-[#D9D9D9] rounded-xl min-w-20">
+              <div className="relative flex items-center backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333] rounded-xl min-w-20">
                 <span className="absolute left-3">🇮🇳</span>
                 <select
                   value={formData.countryCode}
@@ -151,7 +151,7 @@ const Login = () => {
                 value={formData.emailOrPhone}
                 onChange={handleInputChange}
                 placeholder="9567989902"
-                className="flex-1 px-4 py-4 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200"
+                className="flex-1 px-4 py-4 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200"
               />
             </div>
           ) : (
@@ -161,7 +161,7 @@ const Login = () => {
               value={formData.emailOrPhone}
               onChange={handleInputChange}
               placeholder="Enter Email or Phone Number"
-              className="w-full px-4 py-4 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200"
+              className="w-full px-4 py-4 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200"
             />
           )}
         </div>
@@ -174,7 +174,7 @@ const Login = () => {
             value={formData.password}
             onChange={handleInputChange}
             placeholder="Password"
-            className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200 
+            className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200 
               ${
                 isPasswordValid === false
                   ? "border-[#EE5833]"
@@ -213,7 +213,7 @@ const Login = () => {
             onChange={() => setRememberMe(!rememberMe)}
           />
           <p
-            className={`${inter.variable} text-[10px]! font-light! leading-3!`}
+            className={`${inter.variable} text-[10px]! font-light! leading-3! dark:text-[#6C7278]`}
           >
             Remember me?
           </p>
@@ -235,7 +235,7 @@ const Login = () => {
 
       <Link
         href="/forgot-password"
-        className={`mt-4 ${inter.variable} block text-center text-[10px]! text-[#312ECB] font-normal!`}
+        className={`mt-4 ${inter.variable} block text-center text-[10px]! text-[#312ECB] font-normal! dark:text-[#289DE5]`}
       >
         Forgot Password?
       </Link>
@@ -246,7 +246,7 @@ const Login = () => {
           Don’t have an account?{" "}
           <Link
             href="/sign-up"
-            className="text-[#39089D] text-[13px]!  font-normal!"
+            className="text-[#39089D] text-[13px]!  font-normal! dark:text-[#289DE5]"
           >
             Sign up
           </Link>

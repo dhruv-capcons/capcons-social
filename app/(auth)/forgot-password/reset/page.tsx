@@ -107,7 +107,7 @@ const ResetPasswordContent = () => {
         >
           Reset Password
         </p>
-        <p className={`${inter.variable} font-inter text-[11px]! font-normal`}>
+        <p className={`${inter.variable} font-inter text-[11px]! font-normal dark:text-[#6C7278]`}>
           Please type something you&apos;ll remember
         </p>
       </div>
@@ -124,8 +124,8 @@ const ResetPasswordContent = () => {
             placeholder="Enter New Password"
             className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border rounded-xl placeholder-[#5A5A5A] transition-all duration-200 focus:border-[#39089D] ${
               passwordMismatch || isPasswordValid === false
-                ? "border-[#EE5833]"
-                : "border-[#D9D9D9]"
+                ? "border-[#EE5833] dark:border-[#F7594E]"
+                : "border-[#D9D9D9] dark:border-[#333333]"
             }`}
           />
           <button
@@ -150,7 +150,7 @@ const ResetPasswordContent = () => {
             onChange={handleInputChange}
             placeholder="Confirm New Password"
             className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border rounded-xl focus:border-[#39089D] placeholder-[#5A5A5A] transition-all duration-200 ${
-              passwordMismatch ? "border-[#EE5833]" : "border-[#D9D9D9]"
+              passwordMismatch ? "border-[#EE5833] dark:border-[#F7594E]" : "border-[#D9D9D9] dark:border-[#333333]"
             }`}
           />
           <button
@@ -168,7 +168,7 @@ const ResetPasswordContent = () => {
 
         {/* Password Mismatch & Error */}
         {passwordMismatch || errors.length > 0 &&<p
-          className={`text-[#EE5833] font-medium! ${
+          className={`text-[#EE5833] dark:text-[#F7594E] font-medium! ${
             inter.variable
           } text-[10px]! -mt-2 ml-1`}
         >
@@ -179,7 +179,7 @@ const ResetPasswordContent = () => {
         <button
           type="submit"
           disabled={isPending}
-          className={`w-full mt-6 ${inter.variable} bg-[#39089D] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-xs! cursor-pointer`}
+          className={`w-full mt-6 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-xs! cursor-pointer`}
         >
           {isPending ? (
             <LoaderCircle className="mx-auto animate-spin size-5 text-[#39089D]" />
@@ -195,7 +195,7 @@ const ResetPasswordContent = () => {
           Don’t have an account?{" "}
           <Link
             href="/sign-up"
-            className="text-[#39089D] text-[13px]!  font-normal!"
+            className="text-[#39089D] dark:text-[#289DE5] text-[13px]!  font-normal!"
           >
             Sign up
           </Link>

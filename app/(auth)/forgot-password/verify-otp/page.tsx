@@ -111,14 +111,14 @@ const VerifyOTPContent = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-hidde">
       <div className="space-y-3.5 mb-8">
         <p
           className={`${inter.variable} text-[26px]! leading-8! font-medium  `}
         >
           Please verify OTP
         </p>
-        <p className={`${inter.variable} font-inter text-[11px]! font-normal leading-3.5!`}>
+        <p className={`${inter.variable} font-inter text-[11px]! font-normal leading-3.5! dark:text-[#6C7278]`}>
           We&apos;ve sent an email to{" "}
           <span className="font-semibold!">{emailOrPhone}</span>, please enter
           the code below.
@@ -147,8 +147,8 @@ const VerifyOTPContent = () => {
                   index={index}
                   className={`w-11 h-10 text-lg font-medium rounded-sm border-2 transition-all duration-200 ${
                     otpError
-                      ? "border-red-500! "
-                      : "border-[#D9D9D9] bg-white hover:border-gray-400 focus:border-[#39089D]"
+                      ? "border-red-500! dark:border-[#F7594E]! "
+                      : "border-[#D9D9D9] bg-white hover:border-gray-400 focus:border-[#39089D] dark:bg-[#0D0D0D]"
                   }`}
                 />
               ))}
@@ -163,7 +163,7 @@ const VerifyOTPContent = () => {
 
           {/* Error Message */}
           <p
-            className={`text-[#F54135] text-xs! font-normal -mt-2 ${
+            className={`text-[#F54135] dark:text-[#F7594E] text-xs! font-normal -mt-2 ${
               !otpError && "invisible"
             }`}
           >
@@ -201,7 +201,7 @@ const VerifyOTPContent = () => {
         ) : (
           <>
             Send code again{" "}
-            <span className="text-[#F52020B2]">{formattedTime}</span>{" "}
+            <span className="text-[#F52020B2] dark:text-[#F7594E]">{formattedTime}</span>{" "}
           </>
         )}
       </p>
@@ -212,7 +212,7 @@ const VerifyOTPContent = () => {
           Already have an account?{" "}
           <Link
             href="/login"
-            className="text-[#39089D] text-[13px]!  font-normal!"
+            className="text-[#39089D] text-[13px]! dark:text-[#289DE5]  font-normal!"
           >
             Log in
           </Link>

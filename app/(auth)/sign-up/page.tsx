@@ -100,6 +100,7 @@ const SignUp = () => {
 
     registerData.append("credential", formData.emailOrPhone.trim());
     registerData.append("password", formData.password?.trim());
+    registerData.append("name", formData.fullName?.trim());
     if(isPhoneInput) registerData.append("country_code", formData.countryCode.trim());
     registerData.append("circle_id", "674e9cf6477a49f180248d72");
 
@@ -119,11 +120,11 @@ const SignUp = () => {
     <div className="w-full">
       <div className="space-y-3.5 mb-8">
         <p
-          className={`${inter.variable} text-[26px]! leading-8! font-medium  `}
+          className={`${inter.variable} text-[26px]! leading-8! font-medium dark:text-[#FFFFFF] `}
         >
           Welcome!👋 Get Started With Capcons
         </p>
-        <p className={`${inter.variable} font-inter text-[11px]! font-normal`}>
+        <p className={`${inter.variable} font-inter text-[11px]! font-normal dark:text-[#6C7278]`}>
           Not a Member? Start a <b>14 day free trial.</b>{" "}
         </p>
       </div>
@@ -138,7 +139,7 @@ const SignUp = () => {
             value={formData.fullName}
             onChange={handleInputChange}
             placeholder="Full Name"
-            className="w-full px-4 py-4 text-xs! backdrop-blur-sm border border-[#D9D9D9] outline-0 rounded-xl placeholder-[#5A5A5A] transition-all duration-200"
+            className="w-full px-4 py-4 text-xs! backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333] outline-0 rounded-xl placeholder-[#5A5A5A] transition-all duration-200"
           />
         </div>
 
@@ -146,7 +147,7 @@ const SignUp = () => {
         <div className="relative">
           {isPhoneInput ? (
             <div className="flex space-x-2">
-              <div className="relative flex items-center backdrop-blur-sm border border-[#D9D9D9] rounded-xl min-w-20">
+              <div className="relative flex items-center backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333]  rounded-xl min-w-20">
                 <span className="absolute left-3">🇮🇳</span>
                 <select
                   value={formData.countryCode}
@@ -180,7 +181,7 @@ const SignUp = () => {
                 value={formData.emailOrPhone}
                 onChange={handleInputChange}
                 placeholder="9567989902"
-                className="flex-1 px-4 py-4 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200"
+                className="flex-1 px-4 py-4 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333]  rounded-xl  placeholder-[#5A5A5A] transition-all duration-200"
               />
             </div>
           ) : (
@@ -190,7 +191,7 @@ const SignUp = () => {
               value={formData.emailOrPhone}
               onChange={handleInputChange}
               placeholder="Enter Email or Phone Number"
-              className="w-full px-4 py-4 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200"
+              className="w-full px-4 py-4 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333]  rounded-xl  placeholder-[#5A5A5A] transition-all duration-200"
             />
           )}
         </div>
@@ -203,10 +204,10 @@ const SignUp = () => {
             value={formData.password}
             onChange={handleInputChange}
             placeholder="Password"
-            className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200
+            className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200
                ${
                  isPasswordMismatch || isPasswordValid === false
-                   ? "border-[#EE5833]"
+                   ? "border-[#EE5833] dark:border-[#F7594E]"
                    : "border-[#D9D9D9]"
                }
               `}
@@ -232,8 +233,8 @@ const SignUp = () => {
             value={formData.confirmPassword}
             onChange={handleInputChange}
             placeholder="Confirm Password"
-            className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200
-               ${isPasswordMismatch ? "border-[#EE5833]" : "border-[#D9D9D9]"}
+            className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333]  rounded-xl  placeholder-[#5A5A5A] transition-all duration-200
+               ${isPasswordMismatch ? "border-[#EE5833] dark:border-[#F7594E]" : "border-[#D9D9D9]"}
               `}
           />
           <button
@@ -251,7 +252,7 @@ const SignUp = () => {
 
         {/* Password Mismatch & Error */}
         {isPasswordMismatch || errors.length > 0  && <p
-          className={`text-[#EE5833] font-medium! ${
+          className={`text-[#EE5833] dark:text-[#F7594E] font-medium! ${
             inter.variable
           } text-[10px]! -mt-2 ml-1`}
         >
@@ -272,13 +273,13 @@ const SignUp = () => {
               className={`size-2.5 cursor-pointer accent-[#34AAFF]`}
             />
             <label htmlFor="terms&privacy"
-              className={`${inter.variable} text-[10px]! font-light! leading-3!`}
+              className={`${inter.variable} text-[10px]! font-light! leading-3! dark:text-[#6C7278]`}
             >
             I agree to the{" "}
             <Link
               href="https://capcons.com/terms"
               target="_blank"
-              className="underline text-blue-700"
+              className="underline text-blue-700 dark:text-[#289DE5]"
             >
               Terms & Conditions
             </Link>{" "}
@@ -286,7 +287,7 @@ const SignUp = () => {
             <Link
               href="https://capcons.com/privacy"
               target="_blank"
-              className="underline text-blue-700"
+              className="underline text-blue-700 dark:text-[#289DE5]"
             >
               Privacy Policy
             </Link>{" "}
@@ -315,7 +316,7 @@ const SignUp = () => {
           Already have an account?{" "}
           <Link
             href="/login"
-            className="text-[#39089D] text-[13px]!  font-normal!"
+            className="text-[#39089D] dark:text-[#289DE5] text-[13px]!  font-normal!"
           >
             Log in
           </Link>
