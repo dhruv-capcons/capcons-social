@@ -60,7 +60,7 @@ const VerifyOTPContent = () => {
 
     setIsSubmitting(true);
 
-    // For password reset flow, use our API route to handle the cookie
+  // our API route to handle the cookie
     const verificationData = new FormData();
     verificationData.append('credential', emailOrPhone);
     verificationData.append('code', otp);
