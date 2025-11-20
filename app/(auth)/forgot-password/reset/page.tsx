@@ -7,7 +7,6 @@ import { validatePassword } from "@/lib/validations";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useResetPassword } from "@/hooks/useAuth";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -34,11 +33,11 @@ const ResetPasswordContent = () => {
   const [isPasswordValid, setPasswordValid] = useState<null | boolean>(null);
 
   const [errors, setErrors] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const params = useSearchParams();
   const emailOrPhone = params?.get("identifier") || "";
 
-  const { mutate: resetPassword, isPending } = useResetPassword();
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,22 +77,35 @@ const ResetPasswordContent = () => {
       setPasswordMismatch(false);
     }
 
+    setIsSubmitting(true);
+
     const resetData = new FormData();
     resetData.append("credential", emailOrPhone);
     resetData.append("new_password", formData.newPassword);
 
-    resetPassword(resetData, {
-      onSuccess: (data) => {
-        router.push("/login");
+    // Call our Next.js API route which will handle the password_reset_token cookie
+    fetch('/api/auth/reset-password', {
+      method: 'POST',
+      body: resetData,
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Password reset failed');
+        }
+        return response.json();
+      })
+      .then((data) => {
         console.log("Reset Password Success:", data);
-      },
-      onError: (error) => {
-        setErrors([
-          String(error?.response?.data?.message) || "An error occurred",
-        ]);
+        router.push("/login");
+      })
+      .catch((error) => {
+        setErrors([error.message || "An error occurred"]);
         console.error("Reset Password Error:", error);
-      },
-    });
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
 
     // Handle reset password logic here
     console.log("Reset Password Data:", formData);
@@ -178,10 +190,10 @@ const ResetPasswordContent = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={isPending}
-          className={`w-full mt-6 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-xs! cursor-pointer`}
+          disabled={isSubmitting}
+          className={`w-full mt-6 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] shadow-xs shadow-[#0A0D120D] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-xs! cursor-pointer`}
         >
-          {isPending ? (
+          {isSubmitting ? (
             <LoaderCircle className="mx-auto animate-spin size-5 text-[#39089D]" />
           ) : (
             " Confirm Password"

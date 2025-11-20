@@ -170,6 +170,7 @@ export function useResetPassword() {
         "/forget-password/reset",
         resetData,
         {
+          withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
           },
