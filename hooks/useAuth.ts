@@ -23,7 +23,7 @@ export function useLogin() {
   return useMutation<AuthResponse, ApiError, LoginData>({
     mutationFn: async (credentials: LoginData) => {
       setLoading(true);
-      const { data } = await api.post<AuthResponse>("/login", credentials, {
+      const { data } = await api.post<AuthResponse>("/auth/login", credentials, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -86,7 +86,7 @@ export function useRegister() {
         message: string;
         request_id: string;
         user_id: string;
-      }>("/register", userData, {
+      }>("/auth/register", userData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -149,7 +149,7 @@ export function useForgotPassword() {
   >({
     mutationFn: async (forgetPassData: ForgetPassData) => {
       const { data } = await api.post<{ message: string; request_id: string }>(
-        "/forget-password",
+        "/auth/forget-password",
         forgetPassData,
         {
           headers: {
@@ -167,7 +167,7 @@ export function useResetPassword() {
   return useMutation<{ message: string }, ApiError, ResetPasswordData>({
     mutationFn: async (resetData: ResetPasswordData) => {
       const { data } = await api.post<{ message: string }>(
-        "/forget-password/reset",
+        "/auth/forget-password/reset",
         resetData,
         {
           withCredentials: true,
@@ -185,7 +185,7 @@ export function useResetPassword() {
 export function useVerify() {
   return useMutation<AuthResponse, ApiError, FormData>({
     mutationFn: async (verifyData: VerificationData) => {
-      const { data } = await api.post<AuthResponse>("/verify", verifyData, {
+      const { data } = await api.post<AuthResponse>("/auth/verify", verifyData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -203,7 +203,7 @@ export function useResendOTP() {
   return useMutation<{ message: string }, ApiError, ResendData>({
     mutationFn: async (resendData: ResendData) => {
       const { data } = await api.post<{ message: string }>(
-        "/resend-otp",
+        "/auth/resend-otp",
         resendData,
         {
           headers: {
@@ -224,7 +224,7 @@ export function useGetUser() {
         // Try to fetch user details with credentials (uses cookies)
         const { data } = await api.get<{
           data: User | PromiseLike<User | null> | null; user: User 
-}>("/user-details", {
+}>("/auth/user-details", {
           withCredentials: true,
         });
         return data.data;
@@ -240,7 +240,7 @@ export function useGetUser() {
 
           if (refreshResponse.ok) {
             // Token refreshed successfully, retry the original request
-            const { data } = await api.get<{ user: User }>("/user-details", {
+            const { data } = await api.get<{ user: User }>("/auth/user-details", {
               withCredentials: true,
             });
             return data.user;
@@ -268,7 +268,7 @@ export function useLogout() {
   return useMutation<void, ApiError, void>({
     mutationFn: async (): Promise<void> => {
       try {
-        await api.get("/logout", {
+        await api.get("/auth/logout", {
           withCredentials: true,
         });
       } catch {

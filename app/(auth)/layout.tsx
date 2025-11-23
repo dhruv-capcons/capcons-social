@@ -96,8 +96,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${openSans.variable} antialiased`}>
+ 
           <div className="min-h-svh w-full overflow-hidden">
             <Image
               src="/bgg-auth.png"
@@ -110,7 +109,7 @@ export default function RootLayout({
               src="/bg-auth.jpg"
               alt="Auth Background"
               layout="fill"
-              className="object-cover object-center -z-10 relative hidden xmd:block xl:hidden"
+              className="object-cover object-center -z-10 relative hidden xmd:block xl:hidden "
               preload
             />
 
@@ -119,7 +118,14 @@ export default function RootLayout({
                 backgroundImage:
                   "linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 1))",
               }}
-              className="absolute inset-0 z-40 hidden xmd:block"
+              className="absolute inset-0 z-40 hidden xmd:block dark:hidden"
+            />
+            <div
+               style={{
+                backgroundImage:
+                  "linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.2))",
+              }}
+              className="absolute inset-0 z-40 hidden dark:xmd:block backdrop-blur-xs"
             />
 
             <div className="h-full relative z-50 w-full flex items-center justify-center xmd:justify-between xmd:items-start xmd:p-10">
@@ -161,7 +167,5 @@ export default function RootLayout({
               </div>
             </div>
           </div>
-      </body>
-    </html>
   );
 }

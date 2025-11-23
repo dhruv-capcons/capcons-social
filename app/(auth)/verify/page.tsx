@@ -100,7 +100,7 @@ const VerifyContent = () => {
       .then((data) => {
         console.log("Verify OTP Success:", data);
         // Redirect to dashboard if authenticated, otherwise to login
-        router.push(data.authenticated ? "/dashboard" : "/login");
+        router.push(data.authenticated ? "/onboarding" : "/login");
       })
       .catch((error) => {
         setOtpError(true);
@@ -176,7 +176,7 @@ const VerifyContent = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full mt-0 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] shadow-xs shadow-[#0A0D120D] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-sm disabled:opacity-50 cursor-pointer`}
+          className={`w-full mt-0 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] dark:bg-[#4309B6] dark:hover:bg-[#4d0ad1] dark:active:bg-[#33078c] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0)_100%)] shadow-xs shadow-[#0A0D120D] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-sm disabled:opacity-50 cursor-pointer`}
         >
           {isSubmitting ? (
             <LoaderCircle className="mx-auto animate-spin size-5 text-[#39089D]" />
