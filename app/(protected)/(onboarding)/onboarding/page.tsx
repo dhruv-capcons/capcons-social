@@ -160,7 +160,12 @@ const OnBoarding = () => {
           {step.isSkipable && (
             <div>
               <button
-              onClick={() => handleContinue()}
+              onClick={() => {
+                if(step.number === 3){
+                  setDone(true);
+                  return;
+                }
+                handleContinue()}}
                 className={`${inter.variable} text-[1.6rem] font-normal text-[#39089D] dark:text-[#743FE3]  bg-transparent border-0 outline-0 cursor-pointer`}
               >
                 Skip

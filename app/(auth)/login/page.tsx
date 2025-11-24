@@ -212,11 +212,12 @@ const Login = () => {
             checked={rememberMe}
             onChange={() => setRememberMe(!rememberMe)}
           />
-          <p
+          <label
+            htmlFor="rememberMe"
             className={`${inter.variable} text-[10px]! font-light! leading-3! dark:text-[#6C7278]`}
           >
             Remember me?
-          </p>
+          </label>
         </div>
 
         {/* Submit Button */}
