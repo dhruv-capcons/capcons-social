@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { encrypt, decrypt } from '../encrypter';
+
 
 // Cookie configuration constants
 export const COOKIE_CONFIG = {
@@ -32,18 +32,15 @@ export async function setAuthCookies(
   rememberMe: boolean = false
 ) {
   const cookieStore = await cookies();
-  
-  // Encrypt tokens before storing
-  const encryptedAccessToken = encrypt(accessToken);
-  const encryptedRefreshToken = encrypt(refreshToken);
+
   
   // Set access token cookie
-  cookieStore.set(COOKIE_CONFIG.ACCESS_TOKEN.name, encryptedAccessToken, {
+  cookieStore.set(COOKIE_CONFIG.ACCESS_TOKEN.name, accessToken, {
     ...COOKIE_CONFIG.ACCESS_TOKEN,
   });
 
   // Set refresh token cookie with extended expiry if remember me
-  cookieStore.set(COOKIE_CONFIG.REFRESH_TOKEN.name, encryptedRefreshToken, {
+  cookieStore.set(COOKIE_CONFIG.REFRESH_TOKEN.name, refreshToken, {
     ...COOKIE_CONFIG.REFRESH_TOKEN,
     maxAge: rememberMe ? 30 * 24 * 60 * 60 : COOKIE_CONFIG.REFRESH_TOKEN.maxAge, // 30 days if remember me
   });
@@ -65,39 +62,41 @@ export async function clearAuthCookies() {
  */
 export async function getAccessToken(): Promise<string | null> {
   const cookieStore = await cookies();
-  const encryptedToken = cookieStore.get(COOKIE_CONFIG.ACCESS_TOKEN.name);
+  const tokenCookie = cookieStore.get(COOKIE_CONFIG.ACCESS_TOKEN.name);
   
-  if (!encryptedToken?.value) {
+  if (!tokenCookie) {
     return null;
   }
   
   try {
-    return decrypt(encryptedToken.value);
+    // RequestCookie has a `value` property which is the actual string value
+    return tokenCookie.value ?? null;
   } catch {
     // If decryption fails, return null (invalid/corrupted token)
     return null;
   }
 }
-
 /**
  * Get refresh token from cookies
  * Token is decrypted after retrieval
  */
 export async function getRefreshToken(): Promise<string | null> {
   const cookieStore = await cookies();
-  const encryptedToken = cookieStore.get(COOKIE_CONFIG.REFRESH_TOKEN.name);
+  const tokenCookie = cookieStore.get(COOKIE_CONFIG.REFRESH_TOKEN.name);
   
-  if (!encryptedToken?.value) {
+  if (!tokenCookie) {
     return null;
   }
   
   try {
-    return decrypt(encryptedToken.value);
+    // RequestCookie has a `value` property which is the actual string value
+    return tokenCookie.value ?? null;
   } catch {
     // If decryption fails, return null (invalid/corrupted token)
     return null;
   }
 }
+
 
 /**
  * Set auth cookies in a response object
@@ -109,17 +108,15 @@ export function setAuthCookiesInResponse(
   refreshToken: string,
   rememberMe: boolean = false
 ) {
-  // Encrypt tokens before storing
-  const encryptedAccessToken = encrypt(accessToken);
-  const encryptedRefreshToken = encrypt(refreshToken);
+
   
   // Set access token
-  response.cookies.set(COOKIE_CONFIG.ACCESS_TOKEN.name, encryptedAccessToken, {
+  response.cookies.set(COOKIE_CONFIG.ACCESS_TOKEN.name, accessToken, {
     ...COOKIE_CONFIG.ACCESS_TOKEN,
   });
 
   // Set refresh token
-  response.cookies.set(COOKIE_CONFIG.REFRESH_TOKEN.name, encryptedRefreshToken, {
+  response.cookies.set(COOKIE_CONFIG.REFRESH_TOKEN.name, refreshToken, {
     ...COOKIE_CONFIG.REFRESH_TOKEN,
     maxAge: rememberMe ? 30 * 24 * 60 * 60 : COOKIE_CONFIG.REFRESH_TOKEN.maxAge,
   });

@@ -57,6 +57,9 @@ const OnBoarding = () => {
           onSuccess: () => {
             handleContinue();
           },
+          onError: () => {
+            handleContinue();
+          }
         }
       );
     } else {
