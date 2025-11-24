@@ -19,23 +19,45 @@ export async function POST() {
       );
     }
 
-    // Call backend to refresh token
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/refresh`, { withCredentials: true }
-    );
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    // Call backend to refresh token with the refresh token in Cookie header
+    const response = await axios.get(`${apiUrl}/auth/refresh`, {
+      headers: {
+        Cookie: `refresh_token=${refreshToken}`,
+      },
+    });
 
-    const { access_token, refresh_token: newRefreshToken } = response.data.data;
-
-    if (!access_token) {
+    // Extract tokens from Set-Cookie headers
+    const setCookieHeaders = response.headers["set-cookie"];
+    if (!setCookieHeaders || setCookieHeaders.length === 0) {
       return NextResponse.json(
-        { error: "Failed to refresh token" },
+        { error: "No tokens returned from refresh" },
+        { status: 401 }
+      );
+    }
+
+    // Parse access_token and refresh_token from Set-Cookie headers
+    let newAccessToken: string | null = null;
+    let newRefreshToken: string | null = null;
+
+    setCookieHeaders.forEach((cookie: string) => {
+      if (cookie.startsWith("access_token=")) {
+        newAccessToken = cookie.split(";")[0].split("=")[1];
+      } else if (cookie.startsWith("refresh_token=")) {
+        newRefreshToken = cookie.split(";")[0].split("=")[1];
+      }
+    });
+
+    if (!newAccessToken) {
+      return NextResponse.json(
+        { error: "Failed to extract access token" },
         { status: 401 }
       );
     }
 
     // Update cookies with new tokens
     await setAuthCookies(
-      access_token,
+      newAccessToken,
       newRefreshToken || refreshToken, // Use new refresh token if provided, else keep old one
       false
     );

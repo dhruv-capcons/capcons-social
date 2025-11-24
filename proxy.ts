@@ -25,7 +25,21 @@ const AUTH_ROUTES = [
   '/reset-password',
 ];
 
-export function proxy(request: NextRequest) {
+/**
+ * Decode JWT token to check expiration
+ */
+function isTokenExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    if (!payload.exp) return true;
+    const currentTime = Math.floor(Date.now() / 1000);
+    return payload.exp < currentTime;
+  } catch {
+    return true;
+  }
+}
+
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
   // Skip middleware for static files and Next.js internals
@@ -37,8 +51,8 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const accessToken = request.cookies.get(COOKIE_CONFIG.ACCESS_TOKEN.name)?.value;
-  const isAuthenticated = !!accessToken;
+  const accessTokenCookie = request.cookies.get(COOKIE_CONFIG.ACCESS_TOKEN.name);
+  const refreshTokenCookie = request.cookies.get(COOKIE_CONFIG.REFRESH_TOKEN.name);
 
   // Check if route is public
   const isPublicRoute = PUBLIC_ROUTES.some(route => 
@@ -49,16 +63,72 @@ export function proxy(request: NextRequest) {
     pathname === route || pathname.startsWith(route + '/')
   );
 
-  // If authenticated and trying to access auth pages, redirect to dashboard
+  // Determine authentication status
+  const hasAccessToken = !!accessTokenCookie?.value;
+  const hasRefreshToken = !!refreshTokenCookie?.value;
+  const isAccessTokenExpired = hasAccessToken ? isTokenExpired(accessTokenCookie.value) : true;
+  const isRefreshTokenExpired = hasRefreshToken ? isTokenExpired(refreshTokenCookie.value) : true;
+
+  // User is authenticated if they have a valid access token OR valid refresh token
+  const isAuthenticated = (hasAccessToken && !isAccessTokenExpired) || (hasRefreshToken && !isRefreshTokenExpired);
+
+  // If authenticated and trying to access auth pages, redirect to onboarding
   if (isAuthenticated && isAuthRoute) {
     return NextResponse.redirect(new URL('/onboarding', request.url));
   }
 
-  // If not authenticated and trying to access protected route, redirect to login
-  if (!isAuthenticated && !isPublicRoute) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(loginUrl);
+  // If trying to access protected route
+  if (!isPublicRoute) {
+    // No tokens at all - redirect to login
+    if (!hasAccessToken && !hasRefreshToken) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Access token expired but refresh token valid - attempt refresh
+    if (isAccessTokenExpired && !isRefreshTokenExpired) {
+      try {
+        // Call refresh endpoint server-side
+        const refreshResponse = await fetch(new URL('/api/auth/refresh', request.url).toString(), {
+          method: 'POST',
+          headers: {
+            Cookie: request.headers.get('cookie') || '',
+          },
+        });
+
+        if (refreshResponse.ok) {
+          // Token refreshed successfully - continue with new cookies
+          const response = NextResponse.next();
+          
+          // Copy cookies from refresh response
+          refreshResponse.headers.forEach((value, key) => {
+            if (key === 'set-cookie') {
+              response.headers.set(key, value);
+            }
+          });
+          
+          return response;
+        } else {
+          // Refresh failed - redirect to login
+          const loginUrl = new URL('/login', request.url);
+          loginUrl.searchParams.set('redirect', pathname);
+          return NextResponse.redirect(loginUrl);
+        }
+      } catch {
+        // Refresh request failed - redirect to login
+        const loginUrl = new URL('/login', request.url);
+        loginUrl.searchParams.set('redirect', pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+    }
+
+    // Both tokens expired - redirect to login
+    if (isAccessTokenExpired && isRefreshTokenExpired) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
   }
 
   return NextResponse.next();

@@ -5,6 +5,7 @@ import { Public_Sans, Inter, Mulish } from "next/font/google";
 import { useState } from "react";
 import Image from "next/image";
 
+
 const publicSans = Public_Sans({
   variable: "--font-public-sans",
   subsets: ["latin"],
@@ -67,8 +68,17 @@ const gradients = [
   },
 ];
 
-const CardBgSelection = () => {
+const CardBgSelection = ({
+  onColorChange,
+}: {
+  onColorChange?: (colorId: number) => void;
+}) => {
   const [selectedGradient, setSelectedGradient] = useState(gradients[0]);
+
+  const handleGradientSelect = (gradient: typeof gradients[0]) => {
+    setSelectedGradient(gradient);
+    onColorChange?.(gradient.id);
+  };
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -149,7 +159,7 @@ const CardBgSelection = () => {
         {gradients.map((gradient) => (
           <motion.button
             key={gradient.id}
-            onClick={() => setSelectedGradient(gradient)}
+            onClick={() => handleGradientSelect(gradient)}
             className="relative w-16 h-16 rounded-full cursor-pointer shadow-lg"
             style={{
               background: gradient.gradient,

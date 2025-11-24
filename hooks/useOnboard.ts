@@ -4,7 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useOnboardStore } from "@/store/onboardStore";
 import api from "@/lib/axios";
 import { ApiError } from "@/types/auth";
-import axios from "axios";
+
 
 // Types
 export interface UpdateInterestsData {
@@ -23,25 +23,48 @@ export interface Interest {
   type: string;
 }
 
-// Get Interests List Query
+export interface InterestsByCategory {
+  [categoryName: string]: Interest[];
+}
+
+// Get Interests List Query - fetches interests for multiple parent slugs
 export function useGetInterests({
   page,
   length,
-  search,
+  parent_slugs,
 }: {
   page: number;
   length: number;
-  search?: string;
+  parent_slugs?: string[];
 }) {
-  return useQuery<Interest[], ApiError>({
-    queryKey: ["interests-list"],
+  return useQuery<InterestsByCategory, ApiError>({
+    queryKey: ["interests-list", parent_slugs],
     queryFn: async () => {
-      const { data } = await api.get<{ interests: Interest[] }>(
-        `/utils/interests?page=${page}&length=${length}${
-          search ? `&search=${search}` : ""
-        }`
+      if (!parent_slugs || parent_slugs.length === 0) {
+        // If no parent slugs, fetch all interests
+        const { data } = await api.get<{ interests: Interest[] }>(
+          `/utils/interests?page=${page}&length=${length}`
+        );
+        return { all: data?.interests || [] };
+      }
+
+      // Fetch interests for each parent slug
+      const promises = parent_slugs.map((slug) =>
+        api.get<{ interests: Interest[] }>(
+          `/utils/interests?page=${page}&length=${length}&parent_slug=${slug}`
+        )
       );
-      return data?.interests;
+
+      const results = await Promise.all(promises);
+
+      // Combine results into object with slug as key
+      const combined: InterestsByCategory = {};
+      results.forEach((result, index) => {
+        const slug = parent_slugs[index];
+        combined[slug] = result.data?.interests || [];
+      });
+
+      return combined;
     },
     staleTime: Infinity,
   });
@@ -54,8 +77,8 @@ export function useUpdateInterests() {
   return useMutation<{ message: string }, ApiError, UpdateInterestsData>({
     mutationFn: async (data: UpdateInterestsData) => {
       setLoading(true);
-      const response = await api.post<{ message: string }>(
-        "/onboarding/interests",
+      const response = await api.patch<{ message: string }>(
+        "/users/profile/interest",
         data
       );
       return response.data;
@@ -102,6 +125,28 @@ export function useUpdateProfilePic() {
       if (data.image_url) {
         setProfileImage(data.image_url);
       }
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
+
+export function useUpdateColorCard() {
+  const { setColorCard, setLoading } = useOnboardStore();
+
+  return useMutation<{ message: string }, ApiError, { color_card: number }>({
+    mutationFn: async (data: { color_card: number }) => {
+      setLoading(true);
+      const payload = { color_card_id: data.color_card };
+      const response = await api.patch<{ message: string }>(
+        "/users/profile/colorcard",
+        payload
+      );
+      return response.data;
+    },
+    onSuccess: (data, variables) => {
+      setColorCard(variables.color_card);
     },
     onSettled: () => {
       setLoading(false);

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAccessToken } from "@/lib/auth/cookies";
+import { getAccessToken, getRefreshToken } from "@/lib/auth/cookies";
 import axios from "axios";
 
 export async function POST(req: NextRequest) {
@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
 
     // Get authentication token for the profile update step
     const accessToken = await getAccessToken();
+    const refreshToken = await getRefreshToken();
     if (!accessToken) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -33,8 +34,9 @@ export async function POST(req: NextRequest) {
       {
         headers: {
           "Content-Type": "multipart/form-data",
+          Cookie: `access_token=${accessToken}; refresh_token=${refreshToken}`, 
+          
         },
-        withCredentials: true
       }
     );
 
@@ -44,14 +46,16 @@ export async function POST(req: NextRequest) {
       throw new Error("No image URL returned from upload");
     }
 
+    console.log("Uploaded image URL:", imageUrl);
+
     // Step 2: Update user profile with image URL
     const updateResponse = await axios.put(
-      `${apiUrl}/users/profile/pfpimage`,
+      `${apiUrl}/users/profile/pfpimg`,
       { img_url: imageUrl },
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+          Cookie: `access_token=${accessToken}; refresh_token=${refreshToken}`,
         },
       }
     );

@@ -1,11 +1,18 @@
-import { Public_Sans, Mulish } from "next/font/google";
+import { Public_Sans, Mulish, Inter } from "next/font/google";
 import Image from "next/image";
 import { Plus } from "lucide-react";
 import { cx } from "class-variance-authority";
 import { useGetInterests } from "@/hooks/useOnboard";
+import { useState } from "react";
 
 const publicSans = Public_Sans({
   variable: "--font-public-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
 });
@@ -16,9 +23,50 @@ const mulish = Mulish({
   display: "swap",
 });
 
-const InterestSelection = () => {
-  const { data, isLoading, error } = useGetInterests({ page: 1, length: 15 });
-  const isSelected = true;
+const InterestSelection = ({
+  onInterestsChange,
+}: {
+  onInterestsChange?: (interests: string[]) => void;
+}) => {
+  const interestCategories = [
+    {
+      icon: "/icons/trending.svg",
+      title: "Fashion",
+      slug: "fashion",
+    },
+    {
+      icon: "/icons/popcorn.svg",
+      title: "Technology",
+      slug: "technology",
+    },
+    {
+      icon: "/icons/education.svg",
+      title: "Education",
+      slug: "education",
+    },
+  ];
+
+  const { data, isLoading } = useGetInterests({
+    page: 1,
+    length: 15,
+    parent_slugs: interestCategories.map((cat) => cat.slug),
+  });
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+
+  const toggleInterest = (interestSlug: string) => {
+    setSelectedInterests((prev) => {
+      const updated = prev.includes(interestSlug)
+        ? prev.filter((slug) => slug !== interestSlug)
+        : [...prev, interestSlug];
+      
+
+      onInterestsChange?.(updated);
+      return updated;
+    });
+  };
+
+  const isSelected = (interestSlug: string) =>
+    selectedInterests.includes(interestSlug);
 
   if (isLoading)
     return (
@@ -31,72 +79,61 @@ const InterestSelection = () => {
         </div>
       </div>
     );
-  console.log(data);
+
+  console.log(selectedInterests);
 
   return (
-    <div className="space-y-22">
-      <div>
-        <div className="flex items-center gap-4">
-          <Image
-            src="/icons/trending.svg"
-            alt="Dive into your Passion"
-            width={40}
-            height={40}
-          />
-          <h1 className={`${publicSans.variable} font-normal! text-[2.2rem]!`}>
-            Trending
-          </h1>
+    <>
+      <p
+        className={`${inter.variable} font-medium! text-[#794FD1]  text-[1.6rem]! -mt-3 mb-18`}
+      >
+        {selectedInterests.length} Selected
+      </p>
+    <div className="space-y-20">
+      {interestCategories.map((category) => (
+        <div key={category.slug}>
+          <div className="flex items-center gap-4">
+            <Image
+              src={category.icon}
+              alt={category.title}
+              width={40}
+              height={40}
+            />
+            <h1
+              className={`${publicSans.variable} font-normal! text-[2.2rem]!`}
+            >
+              {category.title}
+            </h1>
+          </div>
+          <ul className="mt-8 flex flex-wrap gap-4">
+            {data &&
+              data[category.slug]?.length > 0 &&
+              data[category.slug]
+                .slice(0, category.slug === "fashion" ? 10 : undefined)
+                .map((interest) => (
+                  <li
+                    key={interest._id}
+                    onClick={() => toggleInterest(interest.slug)}
+                    className={cx(
+                      `flex w-fit items-center gap-2 px-5 py-3 rounded-full text-lg! cursor-pointer duration-300 hover:-translate-0.5 ${mulish.variable}`,
+                      isSelected(interest.slug)
+                        ? `bg-[#E7E7FF] dark:bg-[#191919]  border border-[#E7E7FF] dark:border-[#191919] text-[#39089D] dark:text-[#743FE3]`
+                        : ` bg-white dark:bg-[#0D0D0D] text-[#1A1C1E] dark:text-white  border border-[#E5E5E5] dark:border-[#272727]`
+                    )}
+                  >
+                    {interest.name}
+                    <Plus
+                      className={`duration-200 ${
+                        isSelected(interest.slug) && "rotate-45"
+                      }`}
+                    />{" "}
+                  </li>
+                ))}
+          </ul>
         </div>
-        <ul className="mt-8 flex flex-wrap gap-4">
-          {data &&
-            data.length > 0 &&
-            data.slice(0,10).map((interest,i) => (
-              <li
-                className={cx(
-                  `flex w-fit items-center gap-2 px-5 py-3 rounded-full text-lg! cursor-pointer duration-300 hover:-translate-0.5 ${mulish.variable}`,
-                  (i % 2 == 0)
-                    ? `bg-[#E7E7FF] dark:bg-[#191919]  border border-[#E7E7FF] dark:border-[#191919] text-[#39089D] dark:text-[#743FE3]`
-                    : ` bg-white dark:bg-[#0D0D0D] text-[#1A1C1E] dark:text-white  border border-[#E5E5E5] dark:border-[#272727]`
-                )}
-              >
-                Ask India{" "}
-                <Plus className={`duration-200 ${ (i % 2 == 0) && "rotate-45"}`} />{" "}
-              </li>
-            ))}
-        </ul>
-      </div>
-
-      <div>
-        <div className="flex items-center gap-4">
-          <Image
-            src="/icons/popcorn.svg"
-            alt="Dive into your Passion"
-            width={40}
-            height={40}
-          />
-          <h1 className={`${publicSans.variable} font-normal! text-[2.2rem]!`}>
-            Movies and Entertainment
-          </h1>
-        </div>
-        <ul className="mt-8 flex flex-wrap gap-4">
-          {data &&
-            data.length > 0 &&
-            data.slice(10).map((interest,i) => (
-              <li
-                className={cx(
-                  `flex w-fit items-center gap-2 px-5 py-3 rounded-full text-lg! cursor-pointer duration-300 hover:-translate-0.5 ${mulish.variable}`,
-                  (i % 2 == 0)
-                    ? `bg-[#E7E7FF] dark:bg-[#191919]  border border-[#E7E7FF] dark:border-[#191919] text-[#39089D] dark:text-[#743FE3]`
-                    : ` bg-white dark:bg-[#0D0D0D] text-[#1A1C1E] dark:text-white  border border-[#E5E5E5] dark:border-[#272727]`
-                )}
-              >
-                Ask India{" "}
-                <Plus className={`duration-200 ${ (i % 2 == 0) && "rotate-45"}`} />{" "}
-              </li>
-            ))}
-        </ul>
-      </div>
+      ))}
     </div>
+    </>
   );
 };
 
