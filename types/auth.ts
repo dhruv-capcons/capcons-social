@@ -1,3 +1,5 @@
+import { AxiosResponse, AxiosError } from "axios"
+
 export interface User {
   id?: string
   credential: string
@@ -68,12 +70,8 @@ export interface ResendDataObject {
 }
 
 
-export interface ApiError {
-  response?: {
-    data: {
-      message: string
-    }
-  }
+export interface ApiError extends AxiosError {
+  response?: AxiosResponse<{ message: string }>
   message: string
   statusCode: number
   errors?: Record<string, string[]>

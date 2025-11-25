@@ -85,8 +85,14 @@ const Login = () => {
 
     login(loginData, {
       onSuccess: (data) => {
+        const isUserVerified = data.data?.is_verified === false;
+        const request_id = data.data?.request_id;
+        const user_id = data.data?.user_id;
+        if(isUserVerified){
+          router.push(`/verify?identifier=${formData.emailOrPhone}&request_id=${request_id}&user_id=${user_id}`);
+          return;
+        }
         router.push("/onboarding");
-        console.log("Login Success:", data);
       },
       onError: (error) => {
         setErrors([

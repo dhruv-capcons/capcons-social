@@ -111,6 +111,10 @@ const SignUp = () => {
         );
       },
       onError: (error) => {
+        setErrors([
+          error.response?.data?.message ||
+            "Registration failed. Please try again.",
+        ]);
         console.error("Register Error:", error);
       },
     });
