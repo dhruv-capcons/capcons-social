@@ -118,7 +118,7 @@ const SignUp = () => {
 
   return (
     <div className="w-full">
-      <div className="space-y-3.5 mb-8">
+      <div className="space-y-1.5 mb-8">
         <p
           className={`${inter.variable} text-[26px]! leading-8! font-medium dark:text-[#FFFFFF] `}
         >

@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
     // Call backend verify endpoint
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/verify`,
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/verify`,
       backendFormData,
       {
         headers: {

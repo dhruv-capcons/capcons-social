@@ -43,7 +43,7 @@ const OnBoarding = () => {
   const [done, setDone] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const [selectedColorId, setSelectedColorId] = useState<number | null>(null);
+  const [selectedColorId, setSelectedColorId] = useState<string | null>(null);
 
   
   const handleContinue = () => {

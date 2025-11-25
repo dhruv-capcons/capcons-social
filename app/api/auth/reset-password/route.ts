@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
     // Call backend reset password endpoint with token in cookie
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/forget-password/reset`,
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/forget-password/reset`,
       backendFormData,
       {
         headers: {

@@ -8,7 +8,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const updateTheme = () => {
       const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
       
-      if (isDarkMode) {
+      if (!isDarkMode) {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');

@@ -135,8 +135,8 @@ export function useUpdateProfilePic() {
 export function useUpdateColorCard() {
   const { setColorCard, setLoading } = useOnboardStore();
 
-  return useMutation<{ message: string }, ApiError, { color_card: number }>({
-    mutationFn: async (data: { color_card: number }) => {
+  return useMutation<{ message: string }, ApiError, { color_card: string }>({
+    mutationFn: async (data: { color_card: string }) => {
       setLoading(true);
       const payload = { color_card_id: data.color_card };
       const response = await api.patch<{ message: string }>(
