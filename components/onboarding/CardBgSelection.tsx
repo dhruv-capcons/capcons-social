@@ -26,42 +26,42 @@ const mulish = Mulish({
 
 const gradients = [
   {
-    id: 1,
+    id: "1",
     name: "Purple Pink",
     gradient:
       "linear-gradient(145.01deg, #3F2970 5.76%, #322258 41.08%, #7F2A69 82.59%)",
   },
   {
-    id: 2,
+    id: "2",
     name: "Magenta Pink",
     gradient:
       "linear-gradient(149.83deg, #AB001F 10.88%, #9F0C85 44.96%, #9AA6AD 83.65%)",
   },
   {
-    id: 3,
+    id: "3",
     name: "Ocean Blue",
     gradient: "linear-gradient(144.25deg, #274A76 10.88%, #3A7D98 77.09%)",
   },
   {
-    id: 4,
+    id: "4",
     name: "Warm Sunset",
     gradient:
       "linear-gradient(147.09deg, #792316 10.68%, #A07078 45.24%, #92737C 58.24%, #448790 83.89%)",
   },
   {
-    id: 5,
+    id: "5",
     name: "Soft Blue",
     gradient:
       "linear-gradient(147.26deg, #D5D5DA 13%, #B2C8D4 45.27%, #69A6C1 85.26%)",
   },
   {
-    id: 6,
+    id: "6",
     name: "Golden Hour",
     gradient:
       "linear-gradient(147.26deg, #8B9EA5 13%, #BDAE90 45.27%, #BD8758 85.26%)",
   },
   {
-    id: 7,
+    id: "7",
     name: "Mint Fresh",
     gradient:
       "linear-gradient(147.26deg, #D1DCDC 13%, #E1EAE7 45.27%, #95CDD2 85.26%)",
@@ -71,7 +71,7 @@ const gradients = [
 const CardBgSelection = ({
   onColorChange,
 }: {
-  onColorChange?: (colorId: number) => void;
+  onColorChange?: (colorId: string) => void;
 }) => {
   const [selectedGradient, setSelectedGradient] = useState(gradients[0]);
 
