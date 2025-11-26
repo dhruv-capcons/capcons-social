@@ -8,7 +8,6 @@ export const COOKIE_CONFIG = {
     name: 'access_token',
     maxAge: 30 * 60, // 30 minutes
     httpOnly: true,
-    domain: "capcons.com",
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'none' as const,
     path: '/',
