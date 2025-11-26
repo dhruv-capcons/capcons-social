@@ -49,12 +49,17 @@ export async function setAuthCookies(
 
 /**
  * Clear all authentication cookies
+ *
+ * Note: cookies() from next/headers returns a ReadonlyRequestCookies which cannot be mutated,
+ * so create a NextResponse and delete cookies on its response cookies instead.
  */
-export async function clearAuthCookies() {
-  const cookieStore = await cookies();
+export async function clearAuthCookies(): Promise<NextResponse> {
+  const response = NextResponse.next();
   
-  cookieStore.delete(COOKIE_CONFIG.ACCESS_TOKEN.name);
-  cookieStore.delete(COOKIE_CONFIG.REFRESH_TOKEN.name);
+  response.cookies.delete(COOKIE_CONFIG.ACCESS_TOKEN.name);
+  response.cookies.delete(COOKIE_CONFIG.REFRESH_TOKEN.name);
+
+  return response;
 }
 
 /**
