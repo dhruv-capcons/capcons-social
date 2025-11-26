@@ -34,13 +34,38 @@ const InterestSelection = ({
       title: "Fashion",
       slug: "fashion",
     },
+     {
+      icon: "/icons/popcorn.svg",
+      title: "Travel",
+      slug: "travel",
+    },
+     {
+      icon: "/icons/popcorn.svg",
+      title: "Movies",
+      slug: "movies",
+    },
     {
       icon: "/icons/popcorn.svg",
       title: "Technology",
       slug: "technology",
     },
     {
-      icon: "/icons/education.svg",
+      icon: "/icons/popcorn.svg",
+      title: "Music",
+      slug: "music",
+    },
+    {
+      icon: "/icons/popcorn.svg",
+      title: "Food",
+      slug: "food",
+    },
+    {
+      icon: "/icons/popcorn.svg",
+      title: "Sports",
+      slug: "sports",
+    },
+    {
+      icon: "/icons/trending.svg",
       title: "Education",
       slug: "education",
     },
@@ -70,7 +95,7 @@ const InterestSelection = ({
 
   if (isLoading)
     return (
-      <div>
+      <div >
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 bg-[#E7E7FF] dark:bg-[#3a3a3a]  border border-[#E7E7FF] dark:border-[#191919] text-[#39089D] dark:text-[#743FE3] rounded-full animate-pulse" />
           <div
@@ -85,11 +110,11 @@ const InterestSelection = ({
   return (
     <>
       <p
-        className={`${inter.variable} font-medium! text-[#794FD1]  text-[1.6rem]! -mt-3 mb-18`}
+        className={`${inter.variable} bg-[#FBF9FF] dark:bg-[#101010] font-medium! text-[#794FD1] text-[1.6rem]! mb-18 sticky -top-10 transition-all duration-300`}
       >
         {selectedInterests.length} Selected
       </p>
-    <div className="space-y-20">
+    <div className="space-y-18">
       {interestCategories.map((category) => (
         <div key={category.slug}>
           <div className="flex items-center gap-4">

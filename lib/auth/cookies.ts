@@ -8,17 +8,18 @@ export const COOKIE_CONFIG = {
     name: 'access_token',
     maxAge: 30 * 60, // 30 minutes
     httpOnly: true,
+    domain:  process.env.NODE_ENV === 'production' ?  "capcons.com" : undefined,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'none' as const,
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
     path: '/',
   },
   REFRESH_TOKEN: {
     name: 'refresh_token',
     maxAge: 7 * 24 * 60 * 60, // 7 days
     httpOnly: true,
-    domain: "capcons.com",
+     domain:  process.env.NODE_ENV === 'production' ?  "capcons.com" : undefined,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'none' as const,
+   sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
     path: '/',
   },
 };
@@ -53,8 +54,12 @@ export async function setAuthCookies(
 export async function clearAuthCookies() {
   const cookieStore = await cookies();
   
-  cookieStore.delete(COOKIE_CONFIG.ACCESS_TOKEN.name);
-  // cookieStore.delete(COOKIE_CONFIG.REFRESH_TOKEN.name);
+  cookieStore.delete({
+    name:  COOKIE_CONFIG.ACCESS_TOKEN.name,
+    domain: COOKIE_CONFIG.ACCESS_TOKEN.domain,
+    path: COOKIE_CONFIG.ACCESS_TOKEN.path,
+  });
+
 
   cookieStore.delete({
     name: COOKIE_CONFIG.REFRESH_TOKEN.name,

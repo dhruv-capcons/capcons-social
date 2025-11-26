@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { Inter, Public_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import { LoaderCircle } from "lucide-react";
-import Link from "next/link";
-import { useLogin } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import DatePicker from "@/components/DatePicker";
+import {useOnboardingGeneral} from "@/hooks/useOnboard";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -14,11 +13,6 @@ const inter = Inter({
   display: "swap",
 });
 
-const publicSans = Public_Sans({
-  variable: "--font-public-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const UserDetails = () => {
   const [formData, setFormData] = useState({
@@ -28,10 +22,6 @@ const UserDetails = () => {
   });
 
   const [errors, setErrors] = useState<string[]>([]);
-
-
-  const { mutate: login, isPending } = useLogin();
-  const router = useRouter();
 
   const handleInputChange = (
     e:
@@ -46,9 +36,19 @@ const UserDetails = () => {
 
   };
 
+  const router = useRouter();
+  const { mutate: updateUserProfile, isPending } = useOnboardingGeneral();
   const handleUserDetails = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle user details submission logic here
+    updateUserProfile(formData, {
+      onSuccess: () => {
+        router.push("/onboarding");
+      },
+      onError: (error) => {
+        setErrors([error.message]);
+      },
+    });
   }
 
 

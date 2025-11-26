@@ -44,7 +44,7 @@ const ProfilePhotoUpload = ({
 
   return (
     <>
-      <div className="w-full h-full">
+      <div className="w-full">
         <label
           htmlFor="profile-upload"
           className="w-52 h-52 my-40 mx-auto rounded-full flex justify-center items-center cursor-pointer"

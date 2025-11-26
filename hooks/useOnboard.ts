@@ -154,22 +154,27 @@ export function useUpdateColorCard() {
   });
 }
 
-// General Onboarding Functions (Placeholder)
-// export function useOnboardingGeneral() {
-//   const { setLoading } = useOnboardStore();
+// Update User Profile (Username, DOB, Description)
+export interface useOnboardingGeneralData {
+  username: string;
+  dob: string;
+  description: string;
+}
 
-//   return useMutation<{ message: string }, ApiError, any>({
-//     mutationFn: async (data: any) => {
-//       setLoading(true);
-//       // Placeholder endpoint
-//       const response = await api.post<{ message: string }>(
-//         "/onboarding/general",
-//         data
-//       );
-//       return response.data;
-//     },
-//     onSettled: () => {
-//       setLoading(false);
-//     },
-//   });
-// }
+export function useOnboardingGeneral() {
+  const { setLoading } = useOnboardStore();
+
+  return useMutation<{ message: string }, ApiError, useOnboardingGeneralData>({
+    mutationFn: async (data: useOnboardingGeneralData) => {
+      setLoading(true);
+      const response = await api.put<{ message: string }>(
+        "/users/profile/onboarding-1",
+        data
+      );
+      return response.data;
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
