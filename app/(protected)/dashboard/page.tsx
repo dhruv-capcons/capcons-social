@@ -16,15 +16,15 @@ export default function DashboardPage() {
     );
   }
 
-  if (error || !user) {
-    return (
-      <div className="container mx-auto p-8">
-        <div className="flex justify-center items-center h-64">
-          <p className="text-destructive">Failed to load user data</p>
-        </div>
-      </div>
-    );
-  }
+  // if (error || !user) {
+  //   return (
+  //     <div className="container mx-auto p-8">
+  //       <div className="flex justify-center items-center h-64">
+  //         <p className="text-destructive">Failed to load user data</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="container mx-auto p-8">
