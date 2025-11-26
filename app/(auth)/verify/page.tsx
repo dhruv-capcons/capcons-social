@@ -100,7 +100,7 @@ const VerifyContent = () => {
       .then((data) => {
         console.log("Verify OTP Success:", data);
         // Redirect to dashboard if authenticated, otherwise to login
-        router.push(data.authenticated ? "/onboarding" : "/login");
+        router.push(data.authenticated ? "/user-details" : "/login");
       })
       .catch((error) => {
         setOtpError(true);

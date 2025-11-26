@@ -74,7 +74,7 @@ export async function proxy(request: NextRequest) {
 
   // If authenticated and trying to access auth pages, redirect to onboarding
   if (isAuthenticated && isAuthRoute) {
-    return NextResponse.redirect(new URL('/onboarding', request.url));
+    return NextResponse.redirect(new URL('/user-details', request.url));
   }
 
   // If trying to access protected route

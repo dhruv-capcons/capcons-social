@@ -8,16 +8,18 @@ export const COOKIE_CONFIG = {
     name: 'access_token',
     maxAge: 30 * 60, // 30 minutes
     httpOnly: true,
+    domain: "capcons.com",
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax' as const,
+    sameSite: 'none' as const,
     path: '/',
   },
   REFRESH_TOKEN: {
     name: 'refresh_token',
     maxAge: 7 * 24 * 60 * 60, // 7 days
     httpOnly: true,
+    domain: "capcons.com",
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax' as const,
+    sameSite: 'none' as const,
     path: '/',
   },
 };
