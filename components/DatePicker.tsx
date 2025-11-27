@@ -151,7 +151,28 @@ const DatePicker: React.FC<DatePickerProps> = ({
   };
 
   const handleYearSelect = (year: number) => {
-    setCurrentMonth(new Date(year, currentMonth.getMonth()));
+    const newMonth = new Date(year, currentMonth.getMonth());
+    setCurrentMonth(newMonth);
+    
+    // If there's a selected date, update it to the new year while keeping the same month and day
+    if (selectedDate) {
+      const newDate = new Date(
+        year,
+        selectedDate.getMonth(),
+        selectedDate.getDate()
+      );
+      
+      // Validate the new date is within allowed range
+      const maxAllowedDate = new Date();
+      maxAllowedDate.setFullYear(maxAllowedDate.getFullYear() - 13);
+      maxAllowedDate.setHours(23, 59, 59, 999);
+      
+      if (newDate <= maxAllowedDate && year >= 1950) {
+        setSelectedDate(newDate);
+        onChange(formatDate(newDate));
+      }
+    }
+    
     setIsYearDropdownOpen(false);
   };
 
