@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Public_Sans, Inter, Mulish } from "next/font/google";
 import { useState } from "react";
 import Image from "next/image";
+import { MoveRight } from "lucide-react";
 
 
 const publicSans = Public_Sans({
@@ -81,10 +82,10 @@ const CardBgSelection = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center w-full">
       {/* Card Preview */}
       <AnimatePresence mode="wait">
-        <div className="w-full dark:bg-[#47464670] max-w-146 rounded-lg p-10 shadow-xl mb-12 overflow-hidden ">
+        <div className="w-full dark:bg-[#47464670] max-w-146 rounded-lg p-4 xmd:p-10 shadow-xl mb-6 xmd:mb-12 overflow-hidden">
           <motion.div
             key={selectedGradient.id}
             initial={{ scale: 1.1, y: -20, x: -5 }}
@@ -94,42 +95,43 @@ const CardBgSelection = ({
               duration: 0.6,
               ease: [0.4, 0, 0.2, 1],
             }}
-            className="rounded-lg relative px-9 pt-10 pb-4"
+            className="rounded-lg relative px-4 xmd:px-9 pt-6 xmd:pt-10 pb-2 xmd:pb-4 aspect-[1.7/1]"
             style={{
               background: selectedGradient.gradient,
             }}
           >
             {/* Coin Badge */}
-            <div className="absolute top-3 right-6 flex items-center justify-between gap-1">
+            <div className="absolute top-2 xmd:top-3 right-3 xmd:right-6 flex items-center justify-between gap-0.5 xmd:gap-1">
               <Image
                 src="/icons/capcoin.svg"
                 alt="Coin"
-                width={29}
-                height={29}
-                className="mb-1"
+                width={20}
+                height={20}
+                className="mb-0.5 xmd:w-[29px] xmd:h-[29px] xmd:mb-1"
               />
               <span
-                className={`${mulish.variable} text-[#D2D2D2] font-normal text-xl`}
+                className={`${mulish.variable} text-[#D2D2D2] font-normal text-sm xmd:text-xl`}
               >
                 000
               </span>
             </div>
 
             {/* Profile Section */}
-            <div className="flex items-center gap-6 mb-8">
+            <div className="flex items-center gap-3 xmd:gap-6 mb-4 xmd:mb-8">
               <Image
                 src="/icons/personpic.svg"
                 alt="Profile"
-                width={96}
-                height={96}
+                width={60}
+                height={60}
+                className="xmd:w-24 xmd:h-24"
               />
               <div>
                 <p
-                  className={`${publicSans.variable} text-white text-[1.4rem]! font-medium`}
+                  className={`${publicSans.variable} text-white text-base xmd:text-[1.4rem]! font-medium`}
                 >
                   Dhruv Roy
                 </p>
-                <p className={`${inter.variable} text-white text-lg! -mt-1.5`}>
+                <p className={`${inter.variable} text-white text-sm xmd:text-lg! -mt-1 xmd:-mt-1.5`}>
                   @Content creator
                 </p>
               </div>
@@ -137,7 +139,7 @@ const CardBgSelection = ({
 
             {/* Bio Section */}
             <p
-              className={`${inter.variable} text-white text-lg! leading-6! mb-8`}
+              className={`${inter.variable} text-white text-xs xmd:text-lg! leading-4 xmd:leading-6! mb-4 xmd:mb-8`}
             >
               A Profession with 10 years of Experience in Content Creation and
               Dance jams.
@@ -147,20 +149,20 @@ const CardBgSelection = ({
             <div className="h-[0.5px] bg-[#C5C5C5]" />
 
             {/* Stats Placeholder */}
-            <div className="flex items-center justify-center mt-2">
-              <div className="h-10 w-[0.5px] bg-[#C5C5C5]" />
+            <div className="flex items-center justify-center mt-1 xmd:mt-2">
+              <div className="h-6 xmd:h-10 w-[0.5px] bg-[#C5C5C5]" />
             </div>
           </motion.div>
         </div>
       </AnimatePresence>
 
       {/* Gradient Selection */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 overflow-x-auto pb-2 w-full sm:justify-center scrollbar-hide py-2">
         {gradients.map((gradient) => (
           <motion.button
             key={gradient.id}
             onClick={() => handleGradientSelect(gradient)}
-            className="relative w-16 h-16 rounded-full cursor-pointer shadow-lg"
+            className="relative w-16 h-16 rounded-full cursor-pointer shadow-lg z-40 shrink-0"
             style={{
               background: gradient.gradient,
             }}
@@ -198,6 +200,10 @@ const CardBgSelection = ({
           </motion.button>
         ))}
       </div>
+      <span className="text-sm block sm:hidden text-gray-500">
+         scroll to see more <MoveRight className="inline-block ml-2 animate-out" />
+      </span>
+     
     </div>
   );
 };

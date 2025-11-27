@@ -6,6 +6,7 @@ import api from "@/lib/axios";
 import { ApiError } from "@/types/auth";
 
 
+
 // Types
 export interface UpdateInterestsData {
   interests: string[];
@@ -163,15 +164,27 @@ export interface useOnboardingGeneralData {
 
 export function useOnboardingGeneral() {
   const { setLoading } = useOnboardStore();
+ 
 
   return useMutation<{ message: string }, ApiError, useOnboardingGeneralData>({
     mutationFn: async (data: useOnboardingGeneralData) => {
       setLoading(true);
-      const response = await api.put<{ message: string }>(
-        "/users/profile/onboarding-1",
-        data
-      );
-      return response.data;
+      
+      const response = await fetch('/api/onboard/user-details', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || error.message || 'Failed to update profile');
+      }
+
+      return response.json();
     },
     onSettled: () => {
       setLoading(false);

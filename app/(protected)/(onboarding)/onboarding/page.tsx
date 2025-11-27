@@ -190,7 +190,7 @@ const OnBoarding = () => {
           </div>
         </div>
 
-        <div className="flex-1 relative overflow-y-auto overflow-x-hidden py-10">
+        <div data-step={step.number} className={`flex-1 relative overflow-y-auto overflow-x-hidden py-10 data-[step='3']:flex data-[step='3']:items-center`}>
           {step.number === 1 && (
             <ProfilePhotoUpload
               isModalOpen={isModalOpen}

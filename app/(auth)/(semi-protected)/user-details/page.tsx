@@ -21,7 +21,36 @@ const UserDetails = () => {
     description: "",
   });
 
-  const [errors, setErrors] = useState<string[]>([]);
+  const [errors, setErrors] = useState<{
+    username?: string;
+    description?: string;
+    general?: string;
+  }>({});
+
+  const validateUsername = (username: string): string | null => {
+    if (!username) return "Username is required";
+    if (username.length < 3) return "Username must be at least 3 characters";
+    if (username.length > 20) return "Username must be less than 20 characters";
+    // Only alphanumeric and underscore allowed
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      return "Username can only contain letters, numbers, and underscores";
+    }
+    return null;
+  };
+
+  const validateDescription = (description: string): string | null => {
+    if (!description) return null; // Description is optional
+    const wordCount = description.trim().split(/\s+/).filter(word => word.length > 0).length;
+    if (wordCount > 50) {
+      return "Description must be 50 words or less";
+    }
+    return null;
+  };
+
+  const getWordCount = (text: string): number => {
+    if (!text.trim()) return 0;
+    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+  };
 
   const handleInputChange = (
     e:
@@ -29,27 +58,64 @@ const UserDetails = () => {
       | React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+    
+    // Clear specific field error when user starts typing
+    setErrors((prev) => ({
+      ...prev,
+      [name]: undefined,
+    }));
+
+    // For username, remove spaces and special characters as they type
+    if (name === "username") {
+      const sanitized = value.replace(/[^a-zA-Z0-9_]/g, "");
+      setFormData((prev) => ({
+        ...prev,
+        [name]: sanitized,
+      }));
+      return;
+    }
+
+    // For description, prevent exceeding 50 words
+    if (name === "description") {
+      const wordCount = getWordCount(value);
+      if (wordCount > 50) {
+        return; // Don't update if exceeds 50 words
+      }
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-
   };
 
   const router = useRouter();
   const { mutate: updateUserProfile, isPending } = useOnboardingGeneral();
+  
   const handleUserDetails = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle user details submission logic here
+    
+    // Validate all fields
+    const usernameError = validateUsername(formData.username);
+    const descriptionError = validateDescription(formData.description);
+    
+    if (usernameError || descriptionError) {
+      setErrors({
+        username: usernameError || undefined,
+        description: descriptionError || undefined,
+      });
+      return;
+    }
+  
     updateUserProfile(formData, {
       onSuccess: () => {
         router.push("/onboarding");
       },
       onError: (error) => {
-        setErrors([error.message]);
+        setErrors({ general: error.message });
       },
     });
-  }
+  };
 
 
   return (
@@ -70,16 +136,25 @@ const UserDetails = () => {
       <form onSubmit={handleUserDetails} className="space-y-3">
         {/* Username field */}
         <div className="relative">
-          
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              placeholder="Eg. dhruv_roy"
-              className="w-full px-4 py-4 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200"
-            />
-          
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleInputChange}
+            placeholder="Eg. dhruv_roy"
+            className={`w-full px-4 py-4 text-xs! outline-0 backdrop-blur-sm border ${
+              errors.username
+                ? "border-[#EE5833] dark:border-[#EE5833]"
+                : "border-[#D9D9D9] dark:border-[#333333]"
+            } rounded-xl placeholder-[#5A5A5A] transition-all duration-200`}
+          />
+          {errors.username && (
+            <p
+              className={`text-[#EE5833] font-medium! ${inter.variable} text-[10px]! mt-1 ml-1`}
+            >
+              {errors.username}
+            </p>
+          )}
         </div>
 
         {/* DOB Field */}
@@ -96,27 +171,47 @@ const UserDetails = () => {
             name="description"
             value={formData.description}
             onChange={handleInputChange}
-            placeholder="Hello! I am a life enthusiast, a tech enthusiast and a content creator."
-            className={`w-full px-4 py-4 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333] rounded-xl placeholder-[#5A5A5A] transition-all duration-200 resize-none`}
+            placeholder="Eg. Hello! I am a life enthusiast, a tech enthusiast and a content creator."
+            className={`w-full px-4 py-4 text-xs! outline-0 backdrop-blur-sm border ${
+              errors.description
+                ? "border-[#EE5833] dark:border-[#EE5833]"
+                : "border-[#D9D9D9] dark:border-[#333333]"
+            } rounded-xl placeholder-[#5A5A5A] transition-all duration-200 resize-none`}
           />
+          {errors.description && (
+            <p
+              className={`text-[#EE5833] font-medium! ${inter.variable} text-[10px]! mt-1 ml-1`}
+            >
+              {errors.description}
+            </p>
+          )}
         </div>
 
-        {errors.length > 0 && (
-          <p
-            className={`text-[#EE5833] font-medium! ${inter.variable} text-[10px]! -mt-2 ml-1 `}
-          >
-            {errors[0]}
-          </p>
-        )}
-
-        {/* Max words */}
-        <div className="flex items-center gap-2 -mt-2">
+        {/* Word count */}
+        <div className="flex items-center justify-between gap-2 -mt-2">
           <p
             className={`${inter.variable} text-[11px]! font-light! leading-3! text-[#1A91DA]`}
           >
             Max 50 words
           </p>
+          <p
+            className={`${inter.variable} text-[11px]! font-light! leading-3! ${
+              getWordCount(formData.description) > 45
+                ? "text-[#EE5833]"
+                : "text-[#8B8C8F]"
+            }`}
+          >
+            {getWordCount(formData.description)}/50 words
+          </p>
         </div>
+
+        {errors.general && (
+          <p
+            className={`text-[#EE5833] font-medium! ${inter.variable} text-[10px]! -mt-2 ml-1 `}
+          >
+            {errors.general}
+          </p>
+        )}
 
         {/* Submit Button */}
         <button

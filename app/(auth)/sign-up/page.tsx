@@ -126,7 +126,7 @@ const SignUp = () => {
         <p
           className={`${inter.variable} text-[26px]! leading-8! font-medium dark:text-[#FFFFFF] `}
         >
-          Welcome!👋 Get Started With Capcons
+          Welcome!<span className="inline-block animate-wave">👋</span> Get Started With Capcons
         </p>
         <p className={`${inter.variable} font-inter text-[11px]! font-normal dark:text-[#6C7278]`}>
           Not a Member? Start a <b>14 day free trial.</b>{" "}

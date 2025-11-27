@@ -1,13 +1,13 @@
 // lib/axios.ts
-import axios from 'axios'
+import axios from 'axios';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Send cookies with requests
-})
+  withCredentials: true, // Send cookies with requests (client-side)
+});
 
 // Track if we're currently refreshing to avoid multiple refresh calls
 let isRefreshing = false;
@@ -31,12 +31,14 @@ const processQueue = (error: Error | null = null) => {
 // Request interceptor
 api.interceptors.request.use(
   (config) => {
-    return config
+    // withCredentials: true handles cookies automatically in browser
+    // For server-side, cookies need to be passed from the request context
+    return config;
   },
   (error) => {
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
-)
+);
 
 // Response interceptor
 api.interceptors.response.use(

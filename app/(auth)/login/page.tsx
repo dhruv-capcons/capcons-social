@@ -92,6 +92,7 @@ const Login = () => {
           router.push(`/verify?identifier=${formData.emailOrPhone}&request_id=${request_id}&user_id=${user_id}`);
           return;
         }
+        
         router.push("/onboarding");
       },
       onError: (error) => {
@@ -109,7 +110,7 @@ const Login = () => {
         <p
           className={`${inter.variable} text-[26px]! leading-8! font-medium  `}
         >
-          Welcome Back!👋
+          Welcome Back!<span className="inline-block animate-wave">👋</span>
         </p>
         <p className={`${inter.variable} font-inter text-[11px]! font-normal dark:text-[#6C7278]`}>
           Login with your account
