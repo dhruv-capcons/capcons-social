@@ -22,6 +22,15 @@ export const COOKIE_CONFIG = {
    sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
     path: '/',
   },
+  USER_DATA: {
+    name: 'user_data',
+    maxAge: 7 * 24 * 60 * 60, // 7 days - same as refresh token
+    httpOnly: false, // Can be accessed by client-side JavaScript
+    domain:  process.env.NODE_ENV === 'production' ?  "capcons.com" : undefined,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
+    path: '/',
+  },
 };
 
 /**
@@ -65,6 +74,12 @@ export async function clearAuthCookies() {
     name: COOKIE_CONFIG.REFRESH_TOKEN.name,
     domain: COOKIE_CONFIG.REFRESH_TOKEN.domain, 
     path: COOKIE_CONFIG.REFRESH_TOKEN.path, 
+  });
+
+  cookieStore.delete({
+    name: COOKIE_CONFIG.USER_DATA.name,
+    domain: COOKIE_CONFIG.USER_DATA.domain,
+    path: COOKIE_CONFIG.USER_DATA.path,
   });
 }
 
@@ -142,5 +157,45 @@ export function setAuthCookiesInResponse(
 export function clearAuthCookiesFromResponse(response: NextResponse) {
   response.cookies.delete(COOKIE_CONFIG.ACCESS_TOKEN.name);
   response.cookies.delete(COOKIE_CONFIG.REFRESH_TOKEN.name);
+  response.cookies.delete(COOKIE_CONFIG.USER_DATA.name);
   return response;
+}
+
+/**
+ * Set user data cookie
+ * Stores user profile data with same expiry as refresh token
+ */
+export async function setUserDataCookie(userData: unknown) {
+  const cookieStore = await cookies();
+  cookieStore.set(COOKIE_CONFIG.USER_DATA.name, JSON.stringify(userData), {
+    ...COOKIE_CONFIG.USER_DATA,
+  });
+}
+
+/**
+ * Set user data cookie in response object
+ */
+export function setUserDataCookieInResponse(response: NextResponse, userData: unknown) {
+  response.cookies.set(COOKIE_CONFIG.USER_DATA.name, JSON.stringify(userData), {
+    ...COOKIE_CONFIG.USER_DATA,
+  });
+  return response;
+}
+
+/**
+ * Get user data from cookie
+ */
+export async function getUserDataCookie(): Promise<unknown | null> {
+  const cookieStore = await cookies();
+  const userDataCookie = cookieStore.get(COOKIE_CONFIG.USER_DATA.name);
+  
+  if (!userDataCookie) {
+    return null;
+  }
+  
+  try {
+    return JSON.parse(userDataCookie.value);
+  } catch {
+    return null;
+  }
 }

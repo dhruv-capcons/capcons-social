@@ -3,6 +3,7 @@
 import {Montserrat} from "next/font/google";
 import Link from "next/link";
 import { Inter } from "next/font/google";
+import { useUserStore } from "@/store/userStore";
 import {
   Facebook,
   Instagram,
@@ -23,6 +24,9 @@ const montserrat = Montserrat({
 });
 
 const WelcomePage = () => {
+  const { userData } = useUserStore();
+  const userName = userData?.name || "User";
+  
   return (
     <div className={`${inter.variable} min-h-screen bg-white dark:bg-[#101010] flex flex-col`}>
       {/* Header */}
@@ -44,7 +48,7 @@ const WelcomePage = () => {
       <div className="flex-1 max-w-7xl mx-auto px-6 pb-12 w-full">
         {/* Greeting */}
         <h2 className="text-3xl font-semibold mb-4">
-          Hi Anshika,{" "}
+          Hi {userName},{" "}
           <span className="inline-block animate-wave">👋</span>
         </h2>
 

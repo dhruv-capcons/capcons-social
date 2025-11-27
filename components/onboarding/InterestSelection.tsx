@@ -110,14 +110,14 @@ const InterestSelection = ({
   return (
     <>
       <p
-        className={`${inter.variable} bg-[#FBF9FF] dark:bg-[#101010] font-medium! text-[#794FD1] text-[1.6rem]! mb-18 sticky -top-10 transition-all duration-300`}
+        className={`${inter.variable} bg-[#FBF9FF] dark:bg-[#101010] font-medium! text-[#794FD1] text-base sm:text-lg md:text-[1.6rem]! mb-5 sm:mb-10 md:mb-18 sticky -top-2 sm:-top-5 md:-top-10 transition-all duration-300`}
       >
         {selectedInterests.length} Selected
       </p>
-    <div className="space-y-18">
+    <div className="space-y-8 sm:space-y-12 md:space-y-18">
       {interestCategories.map((category) => (
         <div key={category.slug}>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Image
               src={category.icon}
               alt={category.title}
@@ -125,12 +125,12 @@ const InterestSelection = ({
               height={40}
             />
             <h1
-              className={`${publicSans.variable} font-normal! text-[2.2rem]!`}
+              className={`${publicSans.variable} font-normal! text-2xl! sm:text-3xl! md:text-[2.2rem]!`}
             >
               {category.title}
             </h1>
           </div>
-          <ul className="mt-8 flex flex-wrap gap-4">
+          <ul className="mt-4 sm:mt-8 flex flex-wrap gap-4">
             {data &&
               data[category.slug]?.length > 0 &&
               data[category.slug]
@@ -140,7 +140,7 @@ const InterestSelection = ({
                     key={interest._id}
                     onClick={() => toggleInterest(interest.slug)}
                     className={cx(
-                      `flex w-fit items-center gap-2 px-5 py-3 rounded-full text-lg! cursor-pointer duration-300 hover:-translate-0.5 ${mulish.variable}`,
+                      `flex w-fit items-center gap-2 px-5 py-3 rounded-full text-sm! sm:text-base! md:text-lg! cursor-pointer duration-300 hover:-translate-0.5 ${mulish.variable}`,
                       isSelected(interest.slug)
                         ? `bg-[#E7E7FF] dark:bg-[#191919]  border border-[#E7E7FF] dark:border-[#191919] text-[#39089D] dark:text-[#743FE3]`
                         : ` bg-white dark:bg-[#0D0D0D] text-[#1A1C1E] dark:text-white  border border-[#E5E5E5] dark:border-[#272727]`
@@ -148,7 +148,7 @@ const InterestSelection = ({
                   >
                     {interest.name}
                     <Plus
-                      className={`duration-200 ${
+                      className={`duration-200 size-4 sm:size-5 md:size-6 ${
                         isSelected(interest.slug) && "rotate-45"
                       }`}
                     />{" "}

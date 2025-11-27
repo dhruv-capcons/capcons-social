@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAccessToken, getRefreshToken } from "@/lib/auth/cookies";
+import { getAccessToken, getRefreshToken, getUserDataCookie, setUserDataCookieInResponse } from "@/lib/auth/cookies";
 import axios from "axios";
 
 export async function POST(req: NextRequest) {
@@ -60,11 +60,24 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    return NextResponse.json({
+    // Update user_data cookie with new pfp_url and onboarding_step
+    const userData = await getUserDataCookie() as Record<string, unknown> | null;
+    if (userData) {
+      userData.pfp_url = imageUrl;
+      userData.onboarding_step = 3; // Move to interests step
+    }
+
+    const response = NextResponse.json({
       success: true,
       image_url: imageUrl,
       data: updateResponse.data,
     });
+
+    if (userData) {
+      setUserDataCookieInResponse(response, userData);
+    }
+
+    return response;
   } catch (error) {
     console.error("Profile picture upload error:", error);
     const axiosError = error as { response?: { data?: unknown; status?: number } };

@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useOnboardStore } from "@/store/onboardStore";
+import { useUserStore } from "@/store/userStore";
 import api from "@/lib/axios";
 import { ApiError } from "@/types/auth";
 
@@ -135,6 +136,7 @@ export function useUpdateProfilePic() {
 
 export function useUpdateColorCard() {
   const { setColorCard, setLoading } = useOnboardStore();
+  const { setUserData } = useUserStore();
 
   return useMutation<{ message: string }, ApiError, { color_card: string }>({
     mutationFn: async (data: { color_card: string }) => {
@@ -148,6 +150,20 @@ export function useUpdateColorCard() {
     },
     onSuccess: (data, variables) => {
       setColorCard(variables.color_card);
+
+      // Extract user data from cookie
+      const userDataCookie = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('user_data='));
+      
+      if (userDataCookie) {
+        try {
+          const userData = JSON.parse(decodeURIComponent(userDataCookie.split('=')[1]));
+          setUserData(userData);
+        } catch (error) {
+          console.error("Error parsing user data:", error);
+        }
+      }
     },
     onSettled: () => {
       setLoading(false);
@@ -162,11 +178,25 @@ export interface useOnboardingGeneralData {
   description: string;
 }
 
+interface UserData {
+  dob: string;
+  description: string;
+  name: string;
+  user_name: string;
+  pfp_url: string;
+  color_card_id: string;
+  interests: string[] | null;
+  email: string;
+  phone: string;
+  onboarding_step: number;
+}
+
 export function useOnboardingGeneral() {
   const { setLoading } = useOnboardStore();
+  const { setUserData } = useUserStore();
  
 
-  return useMutation<{ message: string }, ApiError, useOnboardingGeneralData>({
+  return useMutation<{ data: UserData }, ApiError, useOnboardingGeneralData>({
     mutationFn: async (data: useOnboardingGeneralData) => {
       setLoading(true);
       
@@ -179,12 +209,18 @@ export function useOnboardingGeneral() {
         credentials: 'include',
       });
 
+      const json = await response.json();
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || error.message || 'Failed to update profile');
+        throw new Error(json.error || json.message || 'Failed to update profile');
       }
 
-      return response.json();
+      return json;
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        setUserData(response.data);
+      }
     },
     onSettled: () => {
       setLoading(false);

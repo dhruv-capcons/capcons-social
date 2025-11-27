@@ -6,6 +6,9 @@ import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import DatePicker from "@/components/DatePicker";
 import {useOnboardingGeneral} from "@/hooks/useOnboard";
+import { useOnboardStore } from "@/store/onboardStore";
+import { useUserStore } from "@/store/userStore";
+
 
 const inter = Inter({
   variable: "--font-inter",
@@ -15,6 +18,15 @@ const inter = Inter({
 
 
 const UserDetails = () => {
+
+  const router = useRouter();
+  const { userData ,setUserData } = useUserStore();
+  
+  if( !userData?.user_name || !userData?.dob  || !userData?.description ) {
+    router.back();
+
+  }
+
   const [formData, setFormData] = useState({
     username: "",
     dob: "",
@@ -89,8 +101,10 @@ const UserDetails = () => {
     }));
   };
 
-  const router = useRouter();
+
   const { mutate: updateUserProfile, isPending } = useOnboardingGeneral();
+  const { setOnboardingStep } = useOnboardStore();
+  
   
   const handleUserDetails = (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,8 +122,43 @@ const UserDetails = () => {
     }
   
     updateUserProfile(formData, {
-      onSuccess: () => {
-        router.push("/onboarding");
+      onSuccess: (data) => {
+        setUserData({
+          dob: formData.dob,
+          description: formData.description,
+          name: data.data.name,
+          user_name: formData.username,
+          pfp_url: data.data.pfp_url,
+          color_card_id: data.data.color_card_id,
+          interests: data.data.interests,
+          email: data.data.email,
+          phone: data.data.phone,
+          onboarding_step: 3, // Move to next step
+        });
+        // Get user data from cookie
+        const userDataCookie = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('user_data='));
+        
+        if (userDataCookie) {
+          try {
+            const userData = JSON.parse(decodeURIComponent(userDataCookie.split('=')[1]));
+            const onboardingStep = userData.onboarding_step || 1;
+
+            if(onboardingStep > 4) {
+              router.push("/welcome");
+              return;
+            }
+            
+            setOnboardingStep(onboardingStep);
+            router.push("/onboarding");
+          } catch (error) {
+            console.error("Error parsing user data:", error);
+            router.push("/onboarding");
+          }
+        } else {
+          router.push("/onboarding");
+        }
       },
       onError: (error) => {
         setErrors({ general: error.message });
@@ -216,8 +265,8 @@ const UserDetails = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={isPending}
-          className={`w-full mt-6.5 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] dark:bg-[#4309B6] dark:hover:bg-[#4d0ad1] dark:active:bg-[#33078c] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0)_100%)] shadow-xs shadow-[#0A0D120D] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-xs! cursor-pointer`}
+          disabled={isPending || !formData.username.trim() || !formData.dob.trim()}
+          className={`w-full mt-6.5 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] disabled:text-[#9E9E9E] dark:bg-[#4309B6] dark:hover:bg-[#4d0ad1] dark:active:bg-[#33078c] dark:disabled:bg-[#1C1C1C] dark:disabled:text-[#5A5A5A] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0)_100%)] shadow-xs shadow-[#0A0D120D] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-xs! cursor-pointer disabled:cursor-not-allowed`}
         >
           {isPending ? (
             <LoaderCircle className="mx-auto animate-spin size-5 text-[#39089D]" />

@@ -140,12 +140,12 @@ const VerifyOTPContent = () => {
               }
             }}
           >
-            <InputOTPGroup className="gap-2">
+            <InputOTPGroup className="gap-1 sm:gap-2">
               {[...Array(6)].map((_, index) => (
                 <InputOTPSlot
                   key={index}
                   index={index}
-                  className={`w-11 h-10 text-lg font-medium rounded-sm border-2 transition-all duration-200 ${
+                  className={`w-9 h-9 sm:w-11 sm:h-10 text-base sm:text-lg font-medium rounded-sm border-2 transition-all duration-200 ${
                     otpError
                       ? "border-red-500! dark:border-[#F7594E]! "
                       : "border-[#D9D9D9] bg-white hover:border-gray-400 focus:border-[#39089D] dark:bg-[#0D0D0D]"
@@ -174,8 +174,8 @@ const VerifyOTPContent = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={isSubmitting}
-          className={`w-full mt-0 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] dark:bg-[#4309B6] dark:hover:bg-[#4d0ad1] dark:active:bg-[#33078c] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0)_100%)] shadow-xs shadow-[#0A0D120D] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-sm disabled:opacity-50 cursor-pointer`}
+          disabled={isSubmitting || otp.length !== 6}
+          className={`w-full mt-6.5 ${inter.variable} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] disabled:text-[#9E9E9E] dark:bg-[#4309B6] dark:hover:bg-[#4d0ad1] dark:active:bg-[#33078c] dark:disabled:bg-[#1C1C1C] dark:disabled:text-[#5A5A5A] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0)_100%)] shadow-xs shadow-[#0A0D120D] text-white font-medium py-3 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-xs! cursor-pointer disabled:cursor-not-allowed`}
         >
           {isSubmitting ? (
             <LoaderCircle className="mx-auto animate-spin size-5 text-[#39089D]" />

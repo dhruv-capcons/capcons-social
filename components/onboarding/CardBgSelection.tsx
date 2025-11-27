@@ -95,7 +95,7 @@ const CardBgSelection = ({
               duration: 0.6,
               ease: [0.4, 0, 0.2, 1],
             }}
-            className="rounded-lg relative px-4 xmd:px-9 pt-6 xmd:pt-10 pb-2 xmd:pb-4 aspect-[1.7/1]"
+            className="rounded-lg relative px-4 xmd:px-9 pt-6 xmd:pt-10 pb-2 xmd:pb-4 "
             style={{
               background: selectedGradient.gradient,
             }}

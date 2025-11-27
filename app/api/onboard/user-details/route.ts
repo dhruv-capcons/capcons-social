@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAccessToken, getRefreshToken } from "@/lib/auth/cookies";
+import { getAccessToken, getRefreshToken, setUserDataCookieInResponse } from "@/lib/auth/cookies";
 import axios from "axios";
 
 export async function PUT(req: NextRequest) {
@@ -37,11 +37,19 @@ export async function PUT(req: NextRequest) {
       }
     );
 
-    return NextResponse.json({
+    // Create response with user data
+    const nextResponse = NextResponse.json({
       success: true,
       message: response.data?.message || "Profile updated successfully",
-      data: response.data,
+      data: response.data?.data,
     });
+
+    // Store user data in cookie with same expiry as refresh token
+    if (response.data?.data) {
+      setUserDataCookieInResponse(nextResponse, response.data.data);
+    }
+
+    return nextResponse;
   } catch (error) {
     console.error("User details update error:", error);
     const axiosError = error as { response?: { data?: unknown; status?: number } };
