@@ -20,17 +20,12 @@ const inter = Inter({
 const UserDetails = () => {
 
   const router = useRouter();
-  const { userData ,setUserData } = useUserStore();
+  const { userData, setUserData } = useUserStore();
   
-  if( !userData?.user_name || !userData?.dob  || !userData?.description ) {
-    router.back();
-
-  }
-
   const [formData, setFormData] = useState({
-    username: "",
-    dob: "",
-    description: "",
+    username: userData?.user_name || "",
+    dob: userData?.dob || "",
+    description: userData?.description || "",
   });
 
   const [errors, setErrors] = useState<{
@@ -38,6 +33,18 @@ const UserDetails = () => {
     description?: string;
     general?: string;
   }>({});
+
+  // Check if user already has complete data, redirect to appropriate page
+  React.useEffect(() => {
+    if (userData?.user_name && userData?.dob && userData?.description) {
+      // User already filled this form, redirect based on onboarding step
+      if (userData.onboarding_step && userData.onboarding_step > 4) {
+        router.push("/welcome");
+      } else {
+        router.push("/onboarding");
+      }
+    }
+  }, [userData, router]);
 
   const validateUsername = (username: string): string | null => {
     if (!username) return "Username is required";
