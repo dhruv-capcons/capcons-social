@@ -187,7 +187,7 @@ const VerifyOTPContent = () => {
 
       {/* Resend OTP Link */}
       <p
-        className={`text-[11px]! ${inter.variable}  font-medium text-center mt-4 cursor-pointer `}
+        className={`text-[11px]! ${inter.variable}  font-medium text-center mt-2 cursor-pointer `}
       >
         {isZero ? (
           <>

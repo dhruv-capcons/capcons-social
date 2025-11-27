@@ -25,18 +25,15 @@ const SignUp = () => {
     fullName: "",
     emailOrPhone: "",
     password: "",
-    countryCode: "91",
-    confirmPassword: "",
+    countryCode: "91"
   });
 
   const { mutate: register, isPending } = useRegister();
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isPhoneInput, setIsPhoneInput] = useState(false);
 
-  const [isPasswordMismatch, setPasswordMismatch] = useState(false);
   const [isPasswordValid, setPasswordValid] = useState<null | boolean>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
   
@@ -85,16 +82,6 @@ const SignUp = () => {
     }
 
     setErrors([]);
-
-    const newPassword = formData.password;
-    const confirmPassword = formData.confirmPassword;
-
-    if (confirmPassword && newPassword && confirmPassword !== newPassword) {
-      setPasswordMismatch(true);
-      return;
-    } else {
-      setPasswordMismatch(false);
-    }
 
     const registerData = new FormData();
 
@@ -210,7 +197,7 @@ const SignUp = () => {
             placeholder="Password"
             className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333] rounded-xl  placeholder-[#5A5A5A] transition-all duration-200
                ${
-                 isPasswordMismatch || isPasswordValid === false
+                 isPasswordValid === false
                    ? "border-[#EE5833] dark:border-[#F7594E]"
                    : "border-[#D9D9D9]"
                }
@@ -229,33 +216,8 @@ const SignUp = () => {
           </button>
         </div>
 
-        {/* Confirm Password Field */}
-        <div className="relative">
-          <input
-            type={showConfirmPassword ? "text" : "password"}
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
-            placeholder="Confirm Password"
-            className={`w-full px-4 py-4 pr-12 text-xs! outline-0 backdrop-blur-sm border border-[#D9D9D9] dark:border-[#333333]  rounded-xl  placeholder-[#5A5A5A] transition-all duration-200
-               ${isPasswordMismatch ? "border-[#EE5833] dark:border-[#F7594E]" : "border-[#D9D9D9]"}
-              `}
-          />
-          <button
-            type="button"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#a5a4a4]  hover:text-[#b1b1b1] transition-colors cursor-pointer"
-          >
-            {showConfirmPassword ? (
-              <EyeOff className="size-3.5 md:size-4 lg:size-5" />
-            ) : (
-              <Eye className="size-3.5 md:size-4 lg:size-5" />
-            )}
-          </button>
-        </div>
-
         {/* Password Mismatch & Error */}
-        {isPasswordMismatch || errors.length > 0  && <p
+        { errors.length > 0  && <p
           className={`text-[#EE5833] dark:text-[#F7594E] font-medium! ${
             inter.variable
           } text-[10px]! -mt-2 ml-1`}

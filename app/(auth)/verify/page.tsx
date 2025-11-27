@@ -113,7 +113,7 @@ const VerifyContent = () => {
 
   return (
     <div className="w-full">
-      <div className="space-y-3.5 mb-8">
+      <div className="space-y-1.5 mb-8">
         <p
           className={`${inter.variable} text-[26px]! leading-8! font-medium  `}
         >
@@ -188,7 +188,7 @@ const VerifyContent = () => {
 
       {/* Resend OTP Link */}
       <p
-        className={`text-[11px]! ${inter.variable}  font-medium text-center mt-4 cursor-pointer `}
+        className={`text-[11px]! ${inter.variable}  font-medium text-center mt-2 cursor-pointer `}
       >
         {isZero ? (
           <>

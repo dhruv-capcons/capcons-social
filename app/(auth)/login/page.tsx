@@ -92,7 +92,7 @@ const Login = () => {
           router.push(`/verify?identifier=${formData.emailOrPhone}&request_id=${request_id}&user_id=${user_id}`);
           return;
         }
-        
+
         router.push("/onboarding");
       },
       onError: (error) => {
@@ -243,7 +243,7 @@ const Login = () => {
 
       <Link
         href="/forgot-password"
-        className={`mt-4 ${inter.variable} block text-center text-[10px]! text-[#312ECB] font-normal! dark:text-[#289DE5]`}
+        className={`mt-2 ${inter.variable} block text-center text-[10px]! text-[#312ECB] font-normal! dark:text-[#289DE5]`}
       >
         Forgot Password?
       </Link>

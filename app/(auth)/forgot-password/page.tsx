@@ -26,6 +26,7 @@ const ForgotPassword = () => {
   });
 
   const [isPhoneInput, setIsPhoneInput] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
 
   const router = useRouter();
   const { mutate: forgetPassword, isPending } = useForgotPassword();
@@ -65,6 +66,7 @@ const ForgotPassword = () => {
         console.log("Forgot Password Success:", data);
       },
       onError: (error) => {
+        setErrors([error?.response?.data?.message ?? "Failed to send OTP. Please try again."]);
         console.error("Forgot Password Error:", error);
       },
     });
@@ -138,6 +140,14 @@ const ForgotPassword = () => {
             />
           )}
         </div>
+
+        {errors.length > 0 &&<p
+          className={`text-[#EE5833] dark:text-[#F7594E] font-medium! ${
+            inter.variable
+          } text-[10px]! -mt-2 ml-1`}
+        >
+          {errors.length > 0 ? <>{errors[0]}</> : "Passwords do not match"}
+        </p>}
 
         {/* Submit Button */}
         <button

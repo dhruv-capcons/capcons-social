@@ -290,7 +290,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
       </div>
 
       {isOpen && (
-        <div className="absolute top-0 sm:top-8 z-50 mt-2 bg-white dark:bg-[#1C1C1C] rounded-2xl shadow-2xl dark:shadow-gray-900 border border-[#E5E5E5] dark:border-[#333333] p-4 w-[280px] -right-7.5 sm:-right-2 scale-75 md:scale-90">
+        <div className="absolute -top-7   z-50 mt-2 bg-white dark:bg-[#1C1C1C] rounded-2xl shadow-2xl dark:shadow-gray-900 border border-[#E5E5E5] dark:border-[#333333] p-4 w-[280px] -right-7.5 sm:-right-2 scale-70 sm:scale-75 lg:scale-80">
           {/* Month/Year Header */}
           <div className="flex items-center justify-between mb-4">
             <button
