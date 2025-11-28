@@ -125,7 +125,7 @@ const InterestSelection = ({
               height={40}
             />
             <h1
-              className={`${publicSans.variable} font-normal! text-2xl! sm:text-3xl! md:text-[2.2rem]!`}
+              className={`${publicSans.variable} font-medium!  text-base! sm:text-2xl! md:text-[2.2rem]! md:font-normal!`}
             >
               {category.title}
             </h1>
@@ -140,7 +140,7 @@ const InterestSelection = ({
                     key={interest._id}
                     onClick={() => toggleInterest(interest.slug)}
                     className={cx(
-                      `flex w-fit items-center gap-2 px-5 py-3 rounded-full text-sm! sm:text-base! md:text-lg! cursor-pointer duration-300 hover:-translate-0.5 ${mulish.variable}`,
+                      `flex w-fit items-center gap-2 px-3 py-3 rounded-full text-xs! sm:text-base! sm:px-5 md:text-lg! cursor-pointer duration-300 hover:-translate-0.5 ${mulish.variable}`,
                       isSelected(interest.slug)
                         ? `bg-[#E7E7FF] dark:bg-[#191919]  border border-[#E7E7FF] dark:border-[#191919] text-[#39089D] dark:text-[#743FE3]`
                         : ` bg-white dark:bg-[#0D0D0D] text-[#1A1C1E] dark:text-white  border border-[#E5E5E5] dark:border-[#272727]`

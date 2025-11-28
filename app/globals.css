@@ -7,6 +7,7 @@
 @theme {
   --breakpoint-xmd: 957px;
   --breakpoint-xss: 500px;
+  --breakpoint-xs: 389px;
 }
 
 html,

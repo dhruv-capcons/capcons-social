@@ -61,7 +61,7 @@ const OnBoarding = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const [selectedColorId, setSelectedColorId] = useState<string | null>(null);
+  const [selectedColorId, setSelectedColorId] = useState<string | null>("1");
 
   const handleContinue = () => {
     if (step.number < 3) {
@@ -153,7 +153,7 @@ const OnBoarding = () => {
       )}
       <section
         data-step={step.number}
-        className="w-full xmd:max-w-7/12 h-svh mx-auto flex flex-col p-6 xmd:shadow-2xl dark:shadow-gray-700 relative py-3 overflow-hidden"
+        className="w-full xmd:max-w-7/12 h-svh mx-auto flex flex-col p-6 xmd:shadow-lg dark:shadow-gray-700 relative py-3 overflow-hidden"
       >
         <div className="sticky top-0 z-50 pt-6 xmd:pt-1">
           <div className="duration-200  py-2 pt-0 sm:pt-4 ">
@@ -198,7 +198,7 @@ const OnBoarding = () => {
                     }
                     handleContinue();
                   }}
-                  className={`${inter.variable} text-lg md:text-[1.2rem] font-normal text-[#39089D] dark:text-[#743FE3]  bg-transparent border-0 outline-0 cursor-pointer`}
+                  className={`${inter.variable} text-sm md:text-base font-normal text-[#39089D] dark:text-[#743FE3]  bg-transparent border-0 outline-0 cursor-pointer`}
                 >
                   Skip
                 </button>
@@ -207,7 +207,7 @@ const OnBoarding = () => {
           </div>
         </div>
 
-        <div data-step={step.number} className={`flex-1 relative overflow-y-hidden data-[step='2']:overflow-y-auto data-[step='3']:overflow-y-auto overflow-x-hidden py-2 sm:py-5 md:py-10 data-[step='3']:flex data-[step='3']:items-center data-[step='1']:flex data-[step='1']:items-center  max-h-[calc(svh-100px)]`}>
+        <div data-step={step.number} className={`flex-1 relative overflow-y-hidden data-[step='2']:overflow-y-auto data-[step='3']:overflow-y-auto overflow-x-hidden py-2 sm:py-5 md:py-10 data-[step='3']:py-2 data-[step='3']:flex data-[step='3']:items-center data-[step='1']:flex data-[step='1']:items-center  max-h-[calc(svh-100px)]`}>
           {step.number === 1 && (
             <ProfilePhotoUpload
               isModalOpen={isModalOpen}
@@ -236,16 +236,21 @@ const OnBoarding = () => {
 
         <div
           data-step={step.number}
-          className="flex items-center justify-center sticky bottom-0 py-2"
+          className="flex items-center justify-center sticky bottom-0 py-2 xmd:data-[step='1']:pb-20"
         >
           <button
             onClick={handleSectionSubmit}
-            className={`${inter.variable} font-medium text-base bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] shadow-xs shadow-[#0A0D120D] dark:bg-[#4309B6] dark:hover:bg-[#4d0ad1] dark:active:bg-[#33078c] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0)_100%)] text-white  py-3.5 w-82 rounded-3xl mx-auto! cursor-pointer`}
+            disabled={
+              (step.number === 1 && (!profileImage)) ||
+              (step.number === 2 && selectedInterests.length < 5) ||
+              (step.number === 3 && !selectedColorId)
+            }
+            className={`${inter.variable} font-medium text-base bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] disabled:text-[#C1C1C2] dark:bg-[#4309B6] dark:hover:bg-[#4d0ad1] dark:active:bg-[#33078c] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0)_100%)] dark:disabled:bg-[#1C1C1C] dark:disabled:text-[#5A5A5A] shadow-xs shadow-[#0A0D120D]  text-white  py-3.5 w-82 rounded-3xl mx-auto! cursor-pointer disabled:cursor-not-allowed`}
           >
             {step.number === 1
               ? isUploading
                 ? "Saving..."
-                : "Save"
+                : "Add a Photo"
               : "Continue"}
           </button>
         </div>

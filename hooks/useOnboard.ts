@@ -79,11 +79,21 @@ export function useUpdateInterests() {
   return useMutation<{ message: string }, ApiError, UpdateInterestsData>({
     mutationFn: async (data: UpdateInterestsData) => {
       setLoading(true);
-      const response = await api.patch<{ message: string }>(
-        "/users/profile/interest",
-        data
-      );
-      return response.data;
+      const response = await fetch("/api/onboard/update-interests", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to update interests");
+      }
+
+      return response.json();
     },
     onSuccess: (data, variables) => {
       setInterests(variables.interests);

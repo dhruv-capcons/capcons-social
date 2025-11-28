@@ -85,7 +85,7 @@ const CardBgSelection = ({
     <div className="flex flex-col items-center justify-center w-full">
       {/* Card Preview */}
       <AnimatePresence mode="wait">
-        <div className="w-full dark:bg-[#47464670] max-w-146 rounded-lg p-4 xmd:p-10 shadow-xl mb-6 xmd:mb-12 overflow-hidden">
+        <div className="w-full dark:bg-[#47464670] max-w-146 rounded-lg p-4 xmd:p-6 lg:p-10 shadow-md mb-6 lg:mb-12 overflow-hidden">
           <motion.div
             key={selectedGradient.id}
             initial={{ scale: 1.1, y: -20, x: -5 }}
@@ -95,7 +95,7 @@ const CardBgSelection = ({
               duration: 0.6,
               ease: [0.4, 0, 0.2, 1],
             }}
-            className="rounded-lg relative px-4 xmd:px-9 pt-6 xmd:pt-10 pb-2 xmd:pb-4 "
+            className="rounded-lg relative px-4 xmd:px-9 pt-6 xmd:pt-10 pb-2 xmd:pb-4 aspect-video!"
             style={{
               background: selectedGradient.gradient,
             }}
@@ -157,12 +157,12 @@ const CardBgSelection = ({
       </AnimatePresence>
 
       {/* Gradient Selection */}
-      <div className="flex items-center gap-4 overflow-x-auto pb-2 w-full sm:justify-center scrollbar-hide py-2">
+      <div className="flex items-center gap-2 md:gap-4 overflow-x-auto pb-2 w-full xss: xs:justify-center scrollbar-hide py-2">
         {gradients.map((gradient) => (
           <motion.button
             key={gradient.id}
             onClick={() => handleGradientSelect(gradient)}
-            className="relative w-16 h-16 rounded-full cursor-pointer shadow-lg z-40 shrink-0"
+            className="relative w-10 h-10 md:w-15 md:h-15 rounded-full cursor-pointer  z-40 shrink-0"
             style={{
               background: gradient.gradient,
             }}
@@ -200,7 +200,7 @@ const CardBgSelection = ({
           </motion.button>
         ))}
       </div>
-      <span className="text-sm block sm:hidden text-gray-500">
+      <span className="text-sm block xs:hidden text-gray-500">
          scroll to see more <MoveRight className="inline-block ml-2 animate-out" />
       </span>
      

@@ -47,7 +47,7 @@ const ProfilePhotoUpload = ({
       <div className="w-full">
         <label
           htmlFor="profile-upload"
-          className="w-52 h-52 my-40 mx-auto rounded-full flex justify-center items-center cursor-pointer"
+          className="w-38 h-38 md:w-52 md:h-52 my-40 mx-auto rounded-full flex justify-center items-center cursor-pointer"
         >
           {profileImage ? (
             <Image
@@ -77,7 +77,7 @@ const ProfilePhotoUpload = ({
                 className="w-full h-full object-cover rounded-full hidden dark:block"
               />
               <p
-                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${inter.variable} text-6xl! text-[#E1E3E5] dark:text-[#8B8C8F] font-normal!`}
+                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${inter.variable} text-4xl! md:text-6xl! text-[#E1E3E5] dark:text-[#8B8C8F] font-normal!`}
               >
                 DR
               </p>

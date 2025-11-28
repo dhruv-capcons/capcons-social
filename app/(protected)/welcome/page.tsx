@@ -25,7 +25,7 @@ const montserrat = Montserrat({
 
 const WelcomePage = () => {
   const { userData } = useUserStore();
-  const userName = userData?.name || "User";
+  const userName = userData?.name || userData?.user_name || "User";
   
   return (
     <div className={`${inter.variable} min-h-screen bg-white dark:bg-[#101010] flex flex-col`}>
@@ -185,7 +185,7 @@ const WelcomePage = () => {
         {/* Get Started Button */}
         <Link
           href="/dashboard"
-          className="block w-full bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] shadow-xs shadow-[#0A0D120D] dark:bg-[#4309B6] dark:hover:bg-[#4d0ad1] dark:active:bg-[#33078c] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0)_100%)] text-white text-center font-semibold py-4 rounded-2xl transition-all duration-200"
+          className="block w-full bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] disabled:text-[#C1C1C2] shadow-xs shadow-[#0A0D120D] dark:bg-[#4309B6] dark:hover:bg-[#4d0ad1] dark:active:bg-[#33078c] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0)_100%)] text-white text-center font-semibold py-4 rounded-2xl transition-all duration-200"
         >
           Get Started
         </Link>
