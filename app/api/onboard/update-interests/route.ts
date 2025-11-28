@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAccessToken, getRefreshToken, setUserDataCookieInResponse, getUserDataCookie } from "@/lib/auth/cookies";
-import axios from "axios";
 
 export async function PATCH(request: NextRequest) {
   try {
@@ -25,16 +24,24 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Call external API to update interests
-    const response = await axios.patch(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/profile/interest`,
-      { interests },
-      {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile/interest`, {
+        method: 'PATCH',
+        body: JSON.stringify({ interests }),
         headers: {
           Cookie: `access_token=${accessToken}; refresh_token=${refreshToken}`,
           "Content-Type": "application/json",
-        },
-      }
-    );
+        },  
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return NextResponse.json(
+        { error: errorData.message || "Failed to update interests" },
+        { status: response.status }
+      );
+    }
+
+    const responseData = await response.json();
 
     // Get existing user data from cookie
     const existingUserData = getUserDataCookie() || {};
@@ -49,7 +56,7 @@ export async function PATCH(request: NextRequest) {
     // Create response and set updated cookie
     const jsonResponse = NextResponse.json(
       {
-        message: response.data.message || "Interests updated successfully",
+        message: responseData.message || "Interests updated successfully",
       },
       { status: 200 }
     );
@@ -60,16 +67,10 @@ export async function PATCH(request: NextRequest) {
   } catch (error: unknown) {
     console.error("Update interests error:", error);
 
-    let status = 500;
+    const status = 500;
     let message = "Failed to update interests";
 
-    if (axios.isAxiosError(error) && error.response) {
-      status = error.response.status || 500;
-      message =
-        error.response.data?.message ||
-        error.message ||
-        message;
-    } else if (error instanceof Error) {
+    if (error instanceof Error) {
       message = error.message;
     }
 
