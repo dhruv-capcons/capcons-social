@@ -1,0 +1,105 @@
+"use client"
+import { Inter, Open_Sans } from "next/font/google";
+import '../app/globals.css'
+
+import Image from "next/image";
+import Link from "next/link";
+
+
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const openSans = Open_Sans({
+  variable: "--font-open-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
+import { usePathname } from "next/navigation"
+
+
+const AuthLayout = ({children} : {children : React.ReactNode}) => {
+    const pathname = usePathname()
+    const isVerifyPage = pathname.includes('/verify');
+  return (
+    <div className="min-h-svh w-full overflow-hidden">
+            <Image
+              src="/bgg-auth.png"
+              alt="Auth Background"
+              layout="fill"
+              className="object-cover object-center -z-10 relative hidden  xl:block"
+              preload
+            />
+            <Image
+              src="/bg-auth.jpg"
+              alt="Auth Background"
+              layout="fill"
+              className="object-cover object-center -z-10 relative hidden xmd:block xl:hidden "
+              preload
+            />
+
+            <div
+              style={{
+                backgroundImage:
+                  "linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 1))",
+              }}
+              className="absolute inset-0 z-40 hidden xmd:block dark:hidden"
+            />
+            <div
+               style={{
+                backgroundImage:
+                  "linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.2))",
+              }}
+              className="absolute inset-0 z-40 hidden dark:xmd:block backdrop-blur-xs"
+            />
+
+            <div className="h-full relative z-50 w-full flex items-center justify-center xmd:justify-between xmd:items-start xmd:p-10">
+              <div className="text-white hidden xmd:block self-end max-w-3xl space-y-6 mb-8 ml-5">
+                <p className={`text-[45px]! ${openSans.variable} leading-14! `}>
+                  Hear And Share Stories With <br /> Circles That Share Your
+                  Interests.
+                </p>
+                <p className={`text-xl! ${inter.variable} leading-7!`}>
+                  Build communities around what you love. Create,
+                  <br /> connect, and grow all on Capcons.
+                </p>
+              </div>
+
+              <div 
+              style={{
+                overflowX: isVerifyPage ? 'hidden' : 'auto'
+              }}
+              className="w-full max-w-89 sm:min-w-110 xss:max-w-110 h-full rounded-lg bg-white xmd:flex-1! p-6 px-7.5 sm:px-12 flex flex-col justify-start  min-h-[calc(100svh-100px)]  dark:bg-[#0D0D0D] ">
+                <div className="shrink-0!">
+                  <Link href="/sign-up">
+                    <Image
+                      src="/capconsvg.svg"
+                      alt="Capcons logo"
+                      width={200}
+                      height={52}
+                      className="h-10 w-auto mb-15 xmd:mb-0 dark:hidden"
+                      unoptimized
+                    />
+                    <Image
+                      src="/capconsdark.svg"
+                      alt="Capcons logo"
+                      width={200}
+                      height={52}
+                      className="h-10 w-auto mb-15 xmd:mb-0 hidden dark:block"
+                      unoptimized
+                    />
+                  </Link>
+                </div>
+                <div className="flex-1 flex items-center text-black dark:text-[#FFFFFF] overflow-auto">
+                  {children}
+                </div>
+              </div>
+            </div>
+          </div>
+  )
+}
+
+export default AuthLayout
