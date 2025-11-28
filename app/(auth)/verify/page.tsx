@@ -112,7 +112,7 @@ const VerifyContent = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-hidden">
       <div className="space-y-1.5 mb-8">
         <p
           className={`${inter.variable} text-[26px]! leading-8! font-medium  `}

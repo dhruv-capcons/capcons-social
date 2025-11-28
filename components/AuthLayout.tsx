@@ -18,12 +18,11 @@ const openSans = Open_Sans({
   subsets: ["latin"],
   display: "swap",
 });
-import { usePathname } from "next/navigation"
+
 
 
 const AuthLayout = ({children} : {children : React.ReactNode}) => {
-    const pathname = usePathname()
-    const isVerifyPage = pathname.includes('/verify');
+
   return (
     <div className="min-h-svh w-full overflow-hidden">
             <Image
@@ -69,10 +68,7 @@ const AuthLayout = ({children} : {children : React.ReactNode}) => {
               </div>
 
               <div 
-              style={{
-                overflowX: isVerifyPage ? 'hidden' : 'auto'
-              }}
-              className="w-full max-w-89 sm:min-w-110 xss:max-w-110 h-full rounded-lg bg-white xmd:flex-1! p-6 px-7.5 sm:px-12 flex flex-col justify-start  min-h-[calc(100svh-100px)]  dark:bg-[#0D0D0D] ">
+              className="w-full max-w-89 sm:min-w-110 xss:max-w-110 h-full rounded-lg bg-white xmd:flex-1! p-6 px-7.5 sm:px-12 flex flex-col justify-start  min-h-[calc(100svh-100px)]  dark:bg-[#0D0D0D]">
                 <div className="shrink-0!">
                   <Link href="/sign-up">
                     <Image
