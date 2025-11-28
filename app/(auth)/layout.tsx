@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -95,6 +96,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
  
           <div className="min-h-svh w-full overflow-hidden">
@@ -140,7 +142,7 @@ export default function RootLayout({
                 </p>
               </div>
 
-              <div className="w-full max-w-89 sm:min-w-110 xss:max-w-110 h-full rounded-lg bg-white xmd:flex-1! p-6 px-8 sm:px-12 flex flex-col justify-start  min-h-[calc(100svh-100px)]  dark:bg-[#0D0D0D] ">
+              <div className="w-full max-w-89 sm:min-w-110 xss:max-w-110 h-full rounded-lg bg-white xmd:flex-1! p-6 px-7.5 sm:px-12 flex flex-col justify-start  min-h-[calc(100svh-100px)]  dark:bg-[#0D0D0D] ">
                 <div className="shrink-0!">
                   <Link href="/sign-up">
                     <Image
