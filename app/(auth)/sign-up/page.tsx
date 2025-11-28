@@ -216,13 +216,13 @@ const SignUp = () => {
           </button>
         </div>
 
-        {/* Password Mismatch & Error */}
+        {/* Password & Error */}
         { errors.length > 0  && <p
           className={`text-[#EE5833] dark:text-[#F7594E] font-medium! ${
             inter.variable
           } text-[10px]! -mt-2 ml-1`}
         >
-          {errors.length > 0 ? <>{errors[0]}</> : "Passwords do not match"}
+          {errors.length > 0 ? <>{errors[0]}</> : "Some error occurred. Please try again."}
         </p>}
 
         {/* Terms and Conditions Checkbox */}

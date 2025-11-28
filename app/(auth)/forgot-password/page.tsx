@@ -146,7 +146,7 @@ const ForgotPassword = () => {
             inter.variable
           } text-[10px]! -mt-2 ml-1`}
         >
-          {errors.length > 0 ? <>{errors[0]}</> : "Passwords do not match"}
+          {errors.length > 0 ? <>{errors[0]}</> : "Some error occurred. Please try again."}
         </p>}
 
         {/* Submit Button */}

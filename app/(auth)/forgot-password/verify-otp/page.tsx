@@ -145,7 +145,7 @@ const VerifyOTPContent = () => {
                 <InputOTPSlot
                   key={index}
                   index={index}
-                  className={`w-9 h-9 sm:w-11 sm:h-10 text-base sm:text-lg font-medium rounded-sm border-2 transition-all duration-200 ${
+                  className={`w-9 h-9 xss:w-11 xss:h-10 text-base sm:text-lg font-medium rounded-sm border-2 transition-all duration-200 ${
                     otpError
                       ? "border-red-500! dark:border-[#F7594E]! "
                       : "border-[#D9D9D9] bg-white hover:border-gray-400 focus:border-[#39089D] dark:bg-[#0D0D0D]"
