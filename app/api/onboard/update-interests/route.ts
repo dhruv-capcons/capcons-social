@@ -6,12 +6,10 @@ export async function PATCH(request: NextRequest) {
     const accessToken = getAccessToken();
     const refreshToken = getRefreshToken();
 
-    if (!accessToken) {
-      return NextResponse.json(
-        { error: "Access token not found" },
-        { status: 401 }
-      );
+  if (!accessToken) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
 
     const body = await request.json();
     const { interests } = body;
@@ -23,13 +21,14 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
     // Call external API to update interests
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile/interest`, {
+    const response = await fetch(`${apiUrl}/users/profile/interest`, {
         method: 'PATCH',
         body: JSON.stringify({ interests }),
         headers: {
-          Cookie: `access_token=${accessToken}; refresh_token=${refreshToken}`,
-          "Content-Type": "application/json",
+            Cookie:`access_token=${accessToken}; refresh_token=${refreshToken}`,
         },  
     });
 

@@ -85,15 +85,17 @@ export function useUpdateInterests() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-        credentials: "include",
+           credentials: 'include',
       });
+
+      const json = await response.json();
 
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || "Failed to update interests");
       }
 
-      return response.json();
+      return json;
     },
     onSuccess: (data, variables) => {
       setInterests(variables.interests);
