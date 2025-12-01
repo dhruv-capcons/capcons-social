@@ -13,11 +13,11 @@ export async function PATCH(request: NextRequest) {
 
 
     const body = await request.json();
-    const { interests } = body;
+    const { color_card_id } = body;
 
-    if (!interests || !Array.isArray(interests)) {
+    if (!color_card_id || typeof color_card_id !== "string") {
       return NextResponse.json(
-        { error: "Invalid interests data" },
+        { error: "Invalid color card ID" },
         { status: 400 }
       );
     }
@@ -25,9 +25,9 @@ export async function PATCH(request: NextRequest) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     // Call external API to update interests
-    const response = await fetch(`${apiUrl}/users/profile/interest`, {
+    const response = await fetch(`${apiUrl}/users/profile/colorcard`, {
         method: 'PATCH',
-        body: JSON.stringify({ interests }),
+        body: JSON.stringify({ color_card_id }),
         headers: {
             Cookie:`access_token=${accessToken}; refresh_token=${refreshToken}`,
         },  
@@ -49,7 +49,7 @@ export async function PATCH(request: NextRequest) {
     // Update user data with new interests and onboarding step
     const updatedUserData = {
       ...existingUserData,
-      interests,
+      color_card_id,
       onboarding_step: 4,
     };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { Inter, Public_Sans } from "next/font/google";
-import { X, RotateCcw, Minus, Plus } from "lucide-react";
+import { X, RotateCcw } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { ImageCrop, ImageCropContent, ImageCropApply, ImageCropReset } from "@/components/ui/shadcn-io/image-crop";
 
@@ -29,12 +29,8 @@ const ImageZoomModal = ({
   onSave: (croppedImage: string) => void;
 }) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [zoom, setZoom] = useState(1);
   const applyRef = useRef<HTMLButtonElement>(null);
   const resetRef = useRef<HTMLButtonElement>(null);
-
-  const minZoom = 0.5;
-  const maxZoom = 3;
 
   useEffect(() => {
     if (imageSrc) {
@@ -48,14 +44,6 @@ const ImageZoomModal = ({
         .catch(err => console.error("Error converting image:", err));
     }
   }, [imageSrc]);
-
-  const handleZoomIn = () => {
-    setZoom((prev) => Math.min(prev + 0.2, maxZoom));
-  };
-
-  const handleZoomOut = () => {
-    setZoom((prev) => Math.max(prev - 0.2, minZoom));
-  };
 
   if (!isOpen || !imageFile) return null;
 
@@ -88,9 +76,7 @@ const ImageZoomModal = ({
         >
           <div className="w-full px-4 sm:px-6">
             <div className="relative w-full h-[250px] sm:h-[312px] mx-auto overflow-hidden rounded-lg border-[#D0D5DD] dark:border-[#2D333E] border border-dashed flex items-center justify-center">
-             <div style={{ transform: `scale(${zoom})`, transition: 'transform 0.2s ease' }}>
-                <ImageCropContent className="max-h-full max-w-full" />
-              </div>
+              <ImageCropContent className="max-h-full max-w-full" />
             </div>
           </div>
 
@@ -100,46 +86,8 @@ const ImageZoomModal = ({
             <ImageCropReset ref={resetRef} />
           </div>
 
-          {/* Zoom Controls */}
-          <div className="px-4 sm:px-6 pt-4 sm:pt-6">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <button
-                onClick={handleZoomOut}
-                disabled={zoom <= minZoom}
-                className="p-1 rounded-full border border-black dark:border-[#E1E3E5] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                <Minus size={16} className="sm:w-5 sm:h-5" />
-              </button>
-
-              <input
-                type="range"
-                min={minZoom}
-                max={maxZoom}
-                step={0.01}
-                value={zoom}
-                onChange={(e) => setZoom(parseFloat(e.target.value))}
-                className="flex-1 h-2 appearance-none cursor-pointer rounded-full custom-range"
-                style={
-                  {
-                    "--progress": `${
-                      ((zoom - minZoom) / (maxZoom - minZoom)) * 100
-                    }%`,
-                  } as React.CSSProperties
-                }
-              />
-
-              <button
-                onClick={handleZoomIn}
-                disabled={zoom >= maxZoom}
-                className="p-1 rounded-full border border-black dark:border-[#E1E3E5] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
-              </button>
-            </div>
-          </div>
-
           {/* Controls */}
-          <div className="p-4 sm:p-6 pt-4 sm:pt-6">
+          <div className="p-4 sm:p-6 pt-6 sm:pt-8">
             <div className="flex items-center justify-end gap-2 sm:gap-3">
               <button
                 onClick={() => resetRef.current?.click()}

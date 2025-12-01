@@ -2,7 +2,6 @@
 
 import {Montserrat} from "next/font/google";
 import Link from "next/link";
-import { Inter } from "next/font/google";
 import { useUserStore } from "@/store/userStore";
 import {
   Facebook,
@@ -10,11 +9,25 @@ import {
   Linkedin,
   Youtube,
 } from "lucide-react";
+import { Public_Sans, Inter, Raleway } from "next/font/google";
+import Image from "next/image";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
+});
+
+const publicSans = Public_Sans({
+  variable: "--font-public-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const raleway = Raleway({
+    variable: "--font-raleway",
+    subsets: ["latin"],
+    display: "swap",
 });
 
 const montserrat = Montserrat({
@@ -28,49 +41,47 @@ const WelcomePage = () => {
   const userName = userData?.name || userData?.user_name || "User";
   
   return (
-    <div className={`${inter.variable} min-h-screen bg-white dark:bg-[#101010] flex flex-col`}>
+    <div className={`${inter.variable} min-h-screen bg-white text-black flex flex-col`}>
       {/* Header */}
-      <header className="text-center mb-12 py-8 px-6">
-        <h1 className="text-6xl xmd:text-7xl font-bold mb-4">
-          <span className="bg-gradient-to-r from-[#6941C6] to-[#9E77ED] bg-clip-text text-transparent">
-            CapCons.
-          </span>
-        </h1>
-        <p className="text-lg xmd:text-xl text-gray-700 dark:text-gray-300">
-          Built to power{" "}
-          <span className="text-[#6941C6] font-semibold">creators</span>,{" "}
-          <span className="text-[#6941C6] font-semibold">communities</span>, and{" "}
-          <span className="text-black dark:text-white font-semibold">cultures</span> of tomorrow.
+      <header className="text-center mb-12 py-10 sm:py-16 md:py-20 px-6 border-b border-[#B9B9B9] flex flex-col items-center justify-center gap-0">
+        <Image
+          src="/welcome.svg"
+          alt="CapCons Logo"
+          width={620}
+          height={130}
+          priority
+          className="w-155 h-auto"
+        />
+        <p className={`${raleway.variable} text-2xl! sm:text-[2.2rem]! font-medium! sm:-mt-12`}>
+          Built to power <span className="text-[#39089D]">creators</span>,<br className="hidden xss:block"/> <span className="text-[#39089D]">communities</span>, and <span className="text-[#39089D]">cultures</span> of <br className="hidden xss:block"/> tomorrow.
         </p>
       </header>
 
       {/* Main Content */}
       <div className="flex-1 max-w-7xl mx-auto px-6 pb-12 w-full">
         {/* Greeting */}
-        <h2 className="text-3xl font-semibold mb-4">
+        <h2 className={`${publicSans.variable} text-[2rem]! font-medium! mb-4`}>
           Hi {userName},{" "}
           <span className="inline-block animate-wave">👋</span>
         </h2>
 
         {/* Welcome Message */}
         <div className="mb-8 space-y-3">
-          <p className="text-base text-gray-700 dark:text-gray-300">
-            Welcome to CapCons! We&apos;re excited to have you on board.
-          </p>
-          <p className="text-base text-gray-700 dark:text-gray-300">
+          <p className={`${inter.variable} text-xl font-normal leading-8!`}>
+            Welcome to CapCons! We&apos;re excited to have you on board. <br/>
             Your account has been successfully registered, and you&apos;re now part of
-            our <span className="font-semibold text-black dark:text-white">community</span>.
+            our <span className="font-semibold text-black">community</span>.
           </p>
         </div>
 
         {/* Next Steps */}
-        <h3 className="text-lg font-semibold mb-6">Here&apos;s what you can do next:</h3>
+        <h3 className={`${inter.variable} text-2xl! font-medium! mb-6`}>Here&apos;s what you can do next:</h3>
 
         {/* Feature Cards */}
         <div className="grid grid-cols-1 xmd:grid-cols-3 gap-6 mb-12">
           {/* Card 1 */}
-          <div className="bg-gray-50 dark:bg-[#1C1C1C] rounded-2xl p-6 text-center border border-gray-200 dark:border-[#333333]">
-            <div className="w-12 h-12 bg-white dark:bg-[#2C2C2C] rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-200 dark:border-[#333333]">
+          <div className="rounded-2xl p-6 text-center border border-[#EAEAEA]">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-200 ">
               <svg
                 width="24"
                 height="24"
@@ -89,14 +100,14 @@ const WelcomePage = () => {
               </svg>
             </div>
             <h4 className="font-semibold text-base mb-2">Explore Key Features</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600">
               Discover the core tools and interactions that make your product stand out.
             </p>
           </div>
 
           {/* Card 2 */}
-          <div className="bg-gray-50 dark:bg-[#1C1C1C] rounded-2xl p-6 text-center border border-gray-200 dark:border-[#333333]">
-            <div className="w-12 h-12 bg-white dark:bg-[#2C2C2C] rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-200 dark:border-[#333333]">
+          <div className="rounded-2xl p-6 text-center border border-[#EAEAEA] ">
+            <div className="w-12 h-12 bg-white  rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-200 ">
               <svg
                 width="24"
                 height="24"
@@ -121,14 +132,14 @@ const WelcomePage = () => {
               </svg>
             </div>
             <h4 className="font-semibold text-base mb-2">Complete your profile</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600 ">
               Add essential details to strengthen your presence and improve discoverability.
             </p>
           </div>
 
           {/* Card 3 */}
-          <div className="bg-gray-50 dark:bg-[#1C1C1C] rounded-2xl p-6 text-center border border-gray-200 dark:border-[#333333]">
-            <div className="w-12 h-12 bg-white dark:bg-[#2C2C2C] rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-200 dark:border-[#333333]">
+          <div className="rounded-2xl p-6 text-center border border-[#EAEAEA] ">
+            <div className="w-12 h-12 bg-white  rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-200 ">
               <svg
                 width="24"
                 height="24"
@@ -161,31 +172,30 @@ const WelcomePage = () => {
               </svg>
             </div>
             <h4 className="font-semibold text-base mb-2">Dive into Capcons</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600 ">
               Explore fresh ideas and innovative methods to build something unique.
             </p>
           </div>
         </div>
 
         {/* Community Message */}
-        <p className="text-base text-gray-700 dark:text-gray-300 mb-8">
-          You&apos;re now part of a growing community of over{" "}
-          <span className="font-semibold text-black dark:text-white">4000 creators</span>. The best way to get
+        <p className={`${publicSans.variable} text-[1.4rem]! font-medium  mb-8`}>
+          You&apos;re now part of a growing community of over 4000 creators. The best way to get
           started? Jump in, experiment, and bring your ideas to life.
         </p>
 
         {/* Sign Off */}
         <div className="mb-8">
-          <p className="text-base text-gray-700 dark:text-gray-300">Cheers,</p>
-          <p className="text-base font-semibold text-black dark:text-white">
+          <p className={`${inter.variable} text-[1.4rem]! font-normal `}>Cheers,</p>
+          <p className={`${inter.variable} text-[1.4rem]! font-medium text-black`}>
             The Capcons Team
           </p>
         </div>
 
         {/* Get Started Button */}
         <Link
-          href="/dashboard"
-          className="block w-full bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] disabled:text-[#C1C1C2] shadow-xs shadow-[#0A0D120D] dark:bg-[#4309B6] dark:hover:bg-[#4d0ad1] dark:active:bg-[#33078c] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0)_100%)] text-white text-center font-semibold py-4 rounded-2xl transition-all duration-200"
+          href="/feed"
+          className="block w-full bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] disabled:text-[#C1C1C2] shadow-xs shadow-[#0A0D120D]  text-white text-center font-semibold py-5 rounded-2xl transition-all duration-200"
         >
           Get Started
         </Link>
@@ -196,8 +206,8 @@ const WelcomePage = () => {
         <p style={{fontFamily: montserrat.style.fontFamily}} className={`${montserrat.variable}  text-[5rem]! xss:text-[7.5rem]! sm:text-[10rem]! md:text-[12rem]! xmd:text-[14rem]! xl:text-[17rem]! font-bold! leading-none! select-none! opacity-10 pointer-events-none absolute! bottom-0!  sm:-bottom-4! xl:-bottom-7! left-1/2 transform -translate-x-1/2 whitespace-nowrap!`}>Capcons.</p>
         <div className="mx-auto px-6">
           {/* Footer Text */}
-          <p className="text-center text-sm mb-6 leading-relaxed">
-            Explore ideas, stories, and expert insights from creators, innovators, and
+          <p className="text-center text-sm mb-10 leading-relaxed">
+            Explore ideas, stories, and expert insights from creators, innovators, and<br className="hidden sm:block"/>
             businesses. Stay informed, get inspired, and join the conversation.
           </p>
 
@@ -205,14 +215,14 @@ const WelcomePage = () => {
           <div className="flex items-center justify-center gap-6 mb-8">
             <a
               href="#"
-              className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+              className="w-10 h-10  hover:bg-white/5 rounded-full flex items-center justify-center transition-colors"
               aria-label="Facebook"
             >
               <Facebook className="w-5 h-5" />
             </a>
             <a
               href="#"
-              className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+              className="w-10 h-10  hover:bg-white/5 rounded-full flex items-center justify-center transition-colors"
               aria-label="Twitter"
             >
               <svg
@@ -227,21 +237,21 @@ const WelcomePage = () => {
             </a>
             <a
               href="#"
-              className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+              className="w-10 h-10  hover:bg-white/5 rounded-full flex items-center justify-center transition-colors"
               aria-label="Instagram"
             >
               <Instagram className="w-5 h-5" />
             </a>
             <a
               href="#"
-              className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+              className="w-10 h-10  hover:bg-white/5 rounded-full flex items-center justify-center transition-colors"
               aria-label="LinkedIn"
             >
               <Linkedin className="w-5 h-5" />
             </a>
             <a
               href="#"
-              className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+              className="w-10 h-10  hover:bg-white/5 rounded-full flex items-center justify-center transition-colors"
               aria-label="Google"
             >
               <svg
@@ -259,7 +269,7 @@ const WelcomePage = () => {
             </a>
             <a
               href="#"
-              className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+              className="w-10 h-10  hover:bg-white/5 rounded-full flex items-center justify-center transition-colors"
               aria-label="YouTube"
             >
               <Youtube className="w-5 h-5" />

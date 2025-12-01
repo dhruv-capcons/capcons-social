@@ -154,11 +154,22 @@ export function useUpdateColorCard() {
     mutationFn: async (data: { color_card: string }) => {
       setLoading(true);
       const payload = { color_card_id: data.color_card };
-      const response = await api.patch<{ message: string }>(
-        "/users/profile/colorcard",
-        payload
-      );
-      return response.data;
+      const response = await fetch("/api/onboard/color-card", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+        credentials: 'include',
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        throw new Error(json.error || "Failed to update color card");
+      }
+      setLoading(false);
+      return json;
     },
     onSuccess: (data, variables) => {
       setColorCard(variables.color_card);
