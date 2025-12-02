@@ -17,16 +17,16 @@ export default function Header() {
             src="/capconsvg.svg"
             alt="Capcons logo"
             width={130}
-            height={34}
-            className="h-8.5 w-auto  xmd:mb-0 dark:hidden"
+            height={30}
+            className="h-7.5 w-auto  xmd:mb-0 dark:hidden"
             unoptimized
           />
           <Image
             src="/capconsdark.svg"
             alt="Capcons logo"
             width={130}
-            height={34}
-            className="h-8.5 w-auto xmd:mb-0 hidden dark:block"
+            height={30}
+            className="h-7.5 w-auto xmd:mb-0 hidden dark:block"
             unoptimized
           />
         </Link>
