@@ -85,7 +85,7 @@ const CardBgSelection = ({
     <div className="flex flex-col items-center justify-center w-full">
       {/* Card Preview */}
       <AnimatePresence mode="wait">
-        <div className="w-full dark:bg-[#47464670] max-w-146 rounded-lg p-4 xmd:p-6 lg:p-10 shadow-md mb-6 lg:mb-12 overflow-hidden">
+        <div className="w-full dark:bg-[#47464670] max-w-146 rounded-lg p-4 xmd:p-6 lg:p-10 shadow-md mb-6 lg:mb-12">
           <motion.div
             key={selectedGradient.id}
             initial={{ scale: 1.1, y: -20, x: -5 }}

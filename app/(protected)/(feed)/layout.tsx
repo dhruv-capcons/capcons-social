@@ -19,7 +19,7 @@ export default async function FeedLayout({
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 ml-[275px] mt-[61px] min-h-[calc(100vh-61px)]">
+        <main className="flex-1 ml-[260px] mt-[60px] min-h-[calc(100vh-60px)] p-2">
           {children}
         </main>
       </div>

@@ -52,7 +52,7 @@ const WelcomePage = () => {
           priority
           className="w-155 h-auto"
         />
-        <p className={`${raleway.variable} text-2xl! sm:text-[2.2rem]! font-medium! sm:-mt-12`}>
+        <p className={`${raleway.className} text-2xl! sm:text-[2.2rem]! font-medium! sm:-mt-12`}>
           Built to power <span className="text-[#39089D]">creators</span>,<br className="hidden xss:block"/> <span className="text-[#39089D]">communities</span>, and <span className="text-[#39089D]">cultures</span> of <br className="hidden xss:block"/> tomorrow.
         </p>
       </header>

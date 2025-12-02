@@ -10,23 +10,23 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-[#0D0D0D] border-b border-gray-200 dark:border-[#2D333E]">
-      <div className="flex items-center justify-between px-6 py-3">
+      <div className="flex items-center justify-between px-6 py-2">
         {/* Logo */}
         <Link href="/feed">
           <Image
             src="/capconsvg.svg"
             alt="Capcons logo"
-            width={200}
-            height={52}
-            className="h-10 w-auto mb-15 xmd:mb-0 dark:hidden"
+            width={130}
+            height={34}
+            className="h-8.5 w-auto  xmd:mb-0 dark:hidden"
             unoptimized
           />
           <Image
             src="/capconsdark.svg"
             alt="Capcons logo"
-            width={200}
-            height={52}
-            className="h-10 w-auto mb-15 xmd:mb-0 hidden dark:block"
+            width={130}
+            height={34}
+            className="h-8.5 w-auto xmd:mb-0 hidden dark:block"
             unoptimized
           />
         </Link>
@@ -45,7 +45,7 @@ export default function Header() {
 
           {/* User Profile */}
           <div className="flex items-center gap-2">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden">
+            <div className="relative w-9 h-9 rounded-full overflow-hidden">
               {userData?.pfp_url ? (
                 <Image
                   src={userData.pfp_url}
@@ -60,10 +60,10 @@ export default function Header() {
               )}
             </div>
             <div className="hidden sm:block">
-              <p className="text-sm font-semibold text-gray-900 dark:text-white">
+              <p className="text-sm! font-medium text-black dark:text-white">
                 {userData?.name || "User"}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs! text-[#A5A5A5] dark:text-gray-400">
                 @{userData?.user_name || "username"}
               </p>
             </div>
