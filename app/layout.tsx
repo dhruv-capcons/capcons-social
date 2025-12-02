@@ -120,8 +120,8 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <QueryProvider>
-            {children}
-            <Analytics />
+              {children}
+              <Analytics />
           </QueryProvider>
         </ThemeProvider>
       </body>

@@ -75,7 +75,7 @@ export default function Sidebar() {
 
       {/* User Profile Section */}
       <div className="mb-8 px-3">
-        <div className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-900 rounded-xl cursor-pointer transition-colors">
+        <div className="flex items-center justify-between p-3  transition-colors">
           <div className="flex items-center gap-3">
             <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
               {userData?.pfp_url ? (
@@ -100,7 +100,9 @@ export default function Sidebar() {
               </p>
             </div>
           </div>
+          <div className="cursor-pointer">
           <MoreHorizontal size={20} className="text-[#0F1419] dark:text-gray-400 flex-shrink-0" />
+          </div>
         </div>
 
         {/* Subscribe to Pro Button */}

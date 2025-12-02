@@ -2,6 +2,8 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/authStore";
+import { useUserStore } from "@/store/userStore";
+import { useOnboardStore } from "@/store/onboardStore";
 import api from "@/lib/axios";
 import {
   User,
@@ -14,6 +16,121 @@ import {
   AuthResponse,
   ApiError,
 } from "@/types/auth";
+
+interface UserDetails {
+  _id: string;
+  name: string;
+  pfp_url: string;
+  cover_url: string;
+  story: string;
+  dob: string;
+  description: string;
+  category: string;
+  designation: string;
+  business_url: string;
+  youtube: string;
+  instagram: string;
+  xlink: string;
+  education: {
+    degree_name: string;
+    university: string;
+    start_year: number;
+    end_year: number;
+  };
+  experience: {
+    company: string;
+    company_role: string;
+    start_year: number;
+    end_year: number;
+    is_current: boolean;
+  };
+  interests: string[];
+  gender: string;
+  pronouns: string;
+  color_card_id: string;
+  friend_count: number;
+  circle_count: number;
+  invitation_count: number;
+  userslug: string;
+  onboarding_step: number;
+}
+
+interface UserDetailsResponse {
+  data: UserDetails;
+  message: string;
+  userId: string;
+}
+
+// Fetch user details
+export function useUserDetails() {
+  const { setUserData } = useUserStore();
+  const { setOnboardingStep, setInterests, setProfileImage, setColorCard } = useOnboardStore();
+
+  // Check if access token exists
+  const hasAccessToken = typeof window !== 'undefined' 
+    ? document.cookie.split('; ').find(row => row.startsWith('access_token='))
+    : false;
+
+  return useQuery<UserDetailsResponse>({
+    queryKey: ['user-details'],
+    queryFn: async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/userdetails`,
+        {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch user details');
+      }
+
+      const data: UserDetailsResponse = await response.json();
+      const userDetails = data.data;
+
+      // Update user store
+      setUserData({
+        name: userDetails.name,
+        user_name: userDetails.userslug,
+        email: '', // Not provided in response
+        phone: '', // Not provided in response
+        dob: userDetails.dob,
+        description: userDetails.description,
+        pfp_url: userDetails.pfp_url,
+        color_card_id: userDetails.color_card_id,
+        interests: userDetails.interests,
+        onboarding_step: userDetails.onboarding_step,
+      });
+
+      // Update onboarding store
+      if (userDetails.pfp_url) {
+        setProfileImage(userDetails.pfp_url);
+      }
+      if (userDetails.interests && userDetails.interests.length > 0) {
+        setInterests(userDetails.interests);
+      }
+      if (userDetails.color_card_id) {
+        setColorCard(userDetails.color_card_id);
+      }
+
+      // Set onboarding step
+      let step = 1;
+      if (userDetails.pfp_url) step = 2;
+      if (userDetails.interests && userDetails.interests.length > 0) step = 3;
+      if (userDetails.color_card_id) step = 4;
+      setOnboardingStep(step);
+
+      return data;
+    },
+    enabled: !!hasAccessToken,
+    retry: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
 
 // Login mutation
 export function useLogin() {
