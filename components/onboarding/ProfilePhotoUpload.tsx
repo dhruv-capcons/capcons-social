@@ -56,7 +56,7 @@ const ProfilePhotoUpload = ({
               width={209}
               height={209}
               draggable={false}
-              className="w-full h-full object-cover rounded-full"
+              className="w-full h-full object-cover rounded-full bg-[url('/bgless.png')] bg-center bg-no-repeat bg-cover"
             />
           ) : (
             <div className="relative">

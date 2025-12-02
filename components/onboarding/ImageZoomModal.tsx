@@ -75,7 +75,7 @@ const ImageZoomModal = ({
           }}
         >
           <div className="w-full px-4 sm:px-6">
-            <div className="relative w-full h-[250px] sm:h-[312px] mx-auto overflow-hidden rounded-lg border-[#D0D5DD] dark:border-[#2D333E] border border-dashed flex items-center justify-center">
+            <div className="relative w-full h-fit max-h-[calc(svh-160px)] mx-auto overflow-hidden rounded-lg border-[#D0D5DD] dark:border-[#2D333E] border border-dashed flex items-center justify-center">
               <ImageCropContent className="max-h-full max-w-full" />
             </div>
           </div>
