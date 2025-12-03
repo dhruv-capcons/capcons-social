@@ -7,14 +7,14 @@ import { useCountdownTimer } from "@/lib/timer";
 import { useResendOTP } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
-
+import Link from "next/link";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import Link from "next/link";
 
+ 
 
 const inter = Inter({
   variable: "--font-inter",
@@ -89,6 +89,7 @@ const VerifyContent = () => {
     fetch('/api/auth/verify-signup', {
       method: 'POST',
       body: verificationData,
+      credentials: 'include',
     })
       .then(async (response) => {
         if (!response.ok) {

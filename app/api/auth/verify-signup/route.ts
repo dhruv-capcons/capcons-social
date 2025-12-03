@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { setAuthCookies } from '@/lib/auth/cookies';
-import axios from 'axios';
+
 
 /**
  * POST /api/auth/verify-signup
@@ -8,6 +8,10 @@ import axios from 'axios';
  */
 export async function POST(request: Request) {
   try {
+
+    console.log('Received verify signup request');
+
+
     const formData = await request.formData();
     const credential = formData.get('credential') as string;
     const code = formData.get('code') as string;
@@ -22,19 +26,19 @@ export async function POST(request: Request) {
     backendFormData.append('request_id', request_id);
 
     // Call backend verify endpoint
-    const response = await axios.post(
+    const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/auth/verify`,
-      backendFormData,
       {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        withCredentials: true,
+        method: 'POST',
+        body: backendFormData,
+        credentials: 'include',
       }
     );
 
+
     // Extract tokens from backend response cookies
-    const setCookieHeader = response.headers['set-cookie'];
+    const setCookieHeader = response.headers.get('set-cookie');
+    console.log('Set-Cookie Header:', setCookieHeader);
     let accessToken = null;
     let refreshToken = null;
 
@@ -65,11 +69,13 @@ export async function POST(request: Request) {
       await setAuthCookies(accessToken, refreshToken, false);
     }
 
+    const data = await response.json();
+
     return NextResponse.json(
       {
         success: true,
         message: 'Sign-up verification successful',
-        data: response.data,
+        data,
         authenticated: !!(accessToken && refreshToken),
       },
       { status: 200 }

@@ -31,7 +31,6 @@ const roboto = Roboto({
 const navigationItems = [
   { name: "Home", icon: Home, href: "/feed" },
   { name: "Explore", icon: Hash, href: "/explore" },
-  { name: "Notifications", icon: Bell, href: "/notifications" },
   { name: "Messages", icon: Mail, href: "/messages" },
   { name: "Bookmarks", icon: Bookmark, href: "/bookmarks" },
   { name: "Lists", icon: FileText, href: "/lists" },

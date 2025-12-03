@@ -38,6 +38,7 @@ const UserDetails = () => {
   React.useEffect(() => {
     if (userData?.user_name && userData?.dob && userData?.description) {
       // User already filled this form, redirect based on onboarding step
+      console.log("User data complete, redirecting...",userData);
       if (userData.onboarding_step && userData.onboarding_step > 4) {
         router.push("/welcome");
       } else {

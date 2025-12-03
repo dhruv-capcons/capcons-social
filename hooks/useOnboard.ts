@@ -6,8 +6,6 @@ import { useUserStore } from "@/store/userStore";
 import api from "@/lib/axios";
 import { ApiError } from "@/types/auth";
 
-
-
 // Types
 export interface UpdateInterestsData {
   interests: string[];
@@ -29,25 +27,40 @@ export interface InterestsByCategory {
   [categoryName: string]: Interest[];
 }
 
+export interface InterestsData {
+  interestByCategory: InterestsByCategory;
+  interestCategories: Interest[];
+}
+
 // Get Interests List Query - fetches interests for multiple parent slugs
 export function useGetInterests({
   page,
   length,
-  parent_slugs,
 }: {
   page: number;
   length: number;
   parent_slugs?: string[];
 }) {
-  return useQuery<InterestsByCategory, ApiError>({
-    queryKey: ["interests-list", parent_slugs],
+  return useQuery<InterestsData, ApiError>({
+    queryKey: ["interests-list"],
     queryFn: async () => {
+
+      
+      const { data : interestCategories  } = await api.get<{ interests: Interest[] }>(
+        `/utils/interests?page=${page}&length=${length}&parent_slug=${""}`
+      );
+      
+      const parent_slugs = interestCategories?.interests?.map((cat: Interest) => cat.slug)
+      console.log("Parent Categories:", interestCategories);
+      console.log("Parent Slugs:", parent_slugs);
+
+
       if (!parent_slugs || parent_slugs.length === 0) {
         // If no parent slugs, fetch all interests
         const { data } = await api.get<{ interests: Interest[] }>(
           `/utils/interests?page=${page}&length=${length}`
         );
-        return { all: data?.interests || [] };
+        return { interestByCategory: {}, interestCategories: data?.interests || [] };
       }
 
       // Fetch interests for each parent slug
@@ -61,12 +74,13 @@ export function useGetInterests({
 
       // Combine results into object with slug as key
       const combined: InterestsByCategory = {};
+
       results.forEach((result, index) => {
         const slug = parent_slugs[index];
         combined[slug] = result.data?.interests || [];
       });
 
-      return combined;
+      return { interestByCategory : combined , interestCategories: interestCategories?.interests || [] };
     },
     staleTime: Infinity,
   });
@@ -85,7 +99,7 @@ export function useUpdateInterests() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-           credentials: 'include',
+        credentials: "include",
       });
 
       const json = await response.json();
@@ -160,7 +174,7 @@ export function useUpdateColorCard() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
-        credentials: 'include',
+        credentials: "include",
       });
 
       const json = await response.json();
@@ -176,12 +190,14 @@ export function useUpdateColorCard() {
 
       // Extract user data from cookie
       const userDataCookie = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('user_data='));
-      
+        .split("; ")
+        .find((row) => row.startsWith("user_data="));
+
       if (userDataCookie) {
         try {
-          const userData = JSON.parse(decodeURIComponent(userDataCookie.split('=')[1]));
+          const userData = JSON.parse(
+            decodeURIComponent(userDataCookie.split("=")[1])
+          );
           setUserData(userData);
         } catch (error) {
           console.error("Error parsing user data:", error);
@@ -217,25 +233,26 @@ interface UserData {
 export function useOnboardingGeneral() {
   const { setLoading } = useOnboardStore();
   const { setUserData } = useUserStore();
- 
 
   return useMutation<{ data: UserData }, ApiError, useOnboardingGeneralData>({
     mutationFn: async (data: useOnboardingGeneralData) => {
       setLoading(true);
-      
-      const response = await fetch('/api/onboard/user-details', {
-        method: 'PUT',
+
+      const response = await fetch("/api/onboard/user-details", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-        credentials: 'include',
+        credentials: "include",
       });
 
       const json = await response.json();
 
       if (!response.ok) {
-        throw new Error(json.error || json.message || 'Failed to update profile');
+        throw new Error(
+          json.error || json.message || "Failed to update profile"
+        );
       }
 
       return json;

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { COOKIE_CONFIG } from "./lib/auth/cookies";
+import { COOKIE_CONFIG, clearAuthCookies } from "./lib/auth/cookies";
 
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = [
@@ -17,6 +17,7 @@ const PUBLIC_ROUTES = [
   "/api/auth/verify",
   "/onboarding",
   "/user-details",
+  "/welcome",
 ];
 
 // Auth routes
@@ -27,33 +28,48 @@ const AUTH_ROUTES = [
   "/reset-password",
 ];
 
-// Routes that require completed onboarding
-// const PROTECTED_ROUTES = [
-//   '/feed',
-//   '/explore',
-//   '/notifications',
-//   '/messages',
-//   '/bookmarks',
-//   '/lists',
-//   '/profile',
-//   '/more',
-//   '/welcome',
-// ];
-
-// // Routes that should be accessible during onboarding
-// const ONBOARDING_ROUTES = [
-//   '/user-details',
-//   '/onboarding',
-// ];
-
 interface UserDetails {
+  _id: string;
+  name: string;
   userslug: string;
   dob: string;
   description: string;
   pfp_url?: string;
+  cover_url: string;
+  story: string;
+  category: string;
+  designation: string;
+  business_url: string;
+  youtube: string;
+  instagram: string;
+  xlink: string;
+  education: {
+    degree_name: string;
+    university: string;
+    start_year: number;
+    end_year: number;
+  };
+  experience: {
+    company: string;
+    company_role: string;
+    start_year: number;
+    end_year: number;
+    is_current: boolean;
+  };
   interests?: string[];
+  gender: string;
+  pronouns: string;
   color_card_id?: string;
+  friend_count: number;
+  circle_count: number;
+  invitation_count: number;
   onboarding_step: number;
+  email: string;
+  phone: string;
+  country_code: string;
+  is_email_verified: boolean;
+  is_phone_verified: boolean;
+  registration_date: string;
 }
 
 /**
@@ -72,6 +88,9 @@ function isTokenExpired(token: string): boolean {
   }
 }
 
+/**
+ * Check if user has seen welcome page (using a cookie)
+ */
 function hasSeenWelcomePage(request: NextRequest): boolean {
   const welcomeCookie = request.cookies.get("has_seen_welcome");
   return welcomeCookie?.value === "true";
@@ -94,11 +113,87 @@ function markWelcomePageAsSeen(response: NextResponse): NextResponse {
 }
 
 /**
+ * Store user data in cookies
+ */
+function storeUserDataInCookies(
+  response: NextResponse,
+  userDetails: UserDetails
+): NextResponse {
+  // Store essential user data in a cookie
+  const userData = {
+    _id: userDetails._id,
+    name: userDetails.name,
+    user_name: userDetails.userslug,
+    dob: userDetails.dob,
+    gender: userDetails.gender,
+    description: userDetails.description,
+    pfp_url: userDetails.pfp_url,
+    interests: userDetails.interests,
+    color_card_id: userDetails.color_card_id,
+    onboarding_step: userDetails.onboarding_step,
+    email: userDetails.email,
+    phone: userDetails.phone,
+    is_email_verified: userDetails.is_email_verified,
+    is_phone_verified: userDetails.is_phone_verified,
+    country_code: userDetails.country_code,
+    registration_date: userDetails.registration_date,
+  };
+
+  response.cookies.set({
+    name: "user_data",
+    value: JSON.stringify(userData),
+    path: "/",
+    maxAge: 2 * 60 * 60, // 2 hours
+    httpOnly: false, // Allow client-side access
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+
+  return response;
+}
+
+/**
+ * Clear all authentication cookies and redirect to login
+ */
+async function clearAuthCookiesAndRedirect(
+  request: NextRequest,
+  pathname: string
+): Promise<NextResponse> {
+  const loginUrl = new URL("/login", request.url);
+  loginUrl.searchParams.set("redirect", pathname);
+
+  // Create redirect response
+  const response = NextResponse.redirect(loginUrl);
+
+  // Clear all auth cookies
+  const cookieNames = [
+    "has_seen_welcome",
+    "user_data",
+    "access_token",
+    "refresh_token",
+  ];
+
+  await clearAuthCookies();
+
+  cookieNames.forEach((cookieName) => {
+    response.cookies.delete(cookieName);
+    response.cookies.set({
+      name: cookieName,
+      value: "",
+      path: "/",
+      expires: new Date(0),
+    });
+  });
+
+  return response;
+}
+
+/**
  * Fetch user details from API (server-side)
  */
 async function fetchUserDetails(
   request: NextRequest
-): Promise<UserDetails | null> {
+): Promise<{ data: UserDetails | null; error: boolean }> {
   console.log("[PROXY] Fetching user details from API...");
   try {
     const userDetailsUrl = `${process.env.NEXT_PUBLIC_API_URL}/users/userdetails`;
@@ -112,26 +207,28 @@ async function fetchUserDetails(
       credentials: "include",
     });
 
-    console.log("User Details Response Status:", response);
     console.log("[PROXY] API Response status:", response.status);
 
     if (!response.ok) {
-      console.log("[PROXY] API call failed");
-      return null;
+      console.log("[PROXY] API call failed with status:", response.status);
+      return { data: null, error: true };
     }
 
-    const data = await response.json();
+    const result = await response.json();
+
     console.log("[PROXY] User details fetched:", {
-      hasSlug: !!data.data?.userslug,
-      hasDob: !!data.data?.dob,
-      hasDescription: !!data.data?.description,
-      onboardingStep: data.data?.onboarding_step,
+      hasSlug: !!result.data?.userslug,
+      hasDob: !!result.data?.dob,
+      hasDescription: !!result.data?.description,
+      onboardingStep: result.data?.onboarding_step,
+      isEmailVerified: result.data?.is_email_verified,
+      isPhoneVerified: result.data?.is_phone_verified,
     });
 
-    return data.data;
+    return { data: result.data, error: false };
   } catch (error) {
     console.error("[PROXY] Error fetching user details:", error);
-    return null;
+    return { data: null, error: true };
   }
 }
 
@@ -186,8 +283,7 @@ function determineRedirectPath(
         return "/welcome";
       }
 
-      // If has seen welcome page, mark onboarding as complete (step 4)
-      // and redirect to feed
+      // If has seen welcome page, redirect to feed
       if (hasSeenWelcome) {
         return "/feed";
       }
@@ -229,51 +325,60 @@ function determineRedirectPath(
 }
 
 /**
- * Handle authenticated user routing
+ * Handle authenticated user routing - ALWAYS fetches and stores fresh data
  */
 async function handleAuthenticatedUser(
-  request: NextRequest
+  request: NextRequest,
+  shouldCheckRedirect: boolean = true
 ): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
 
-  // Fetch user details
-  const userDetails = await fetchUserDetails(request);
+  // ALWAYS fetch fresh user details on every request
+  const { data: userDetails, error } = await fetchUserDetails(request);
 
-  if (!userDetails) {
-    // If we can't fetch user details, redirect to login
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
+  // If API has error or user doesn't exist, logout immediately
+  if (error || !userDetails) {
+    console.log(
+      "[PROXY] User details fetch failed or user deleted, logging out"
+    );
+    return clearAuthCookiesAndRedirect(request, pathname);
   }
 
+  // ALWAYS store fresh user data in cookies
+  let response = NextResponse.next();
+  response = storeUserDataInCookies(response, userDetails);
+
   // Determine if user needs to be redirected
-  const redirectPath = determineRedirectPath(userDetails, pathname, request);
+  if (shouldCheckRedirect) {
+    const redirectPath = determineRedirectPath(userDetails, pathname, request);
 
-  if (redirectPath) {
-    // Don't redirect if already on the correct path
-    if (
-      pathname !== redirectPath &&
-      !pathname.startsWith(redirectPath.split("?")[0])
-    ) {
-      // If redirecting TO welcome page, we should mark it as seen
-      let response = NextResponse.redirect(new URL(redirectPath, request.url));
+    if (redirectPath) {
+      // Don't redirect if already on the correct path
+      if (
+        pathname !== redirectPath &&
+        !pathname.startsWith(redirectPath.split("?")[0])
+      ) {
+        // Create redirect response
+        response = NextResponse.redirect(new URL(redirectPath, request.url));
+        // STILL store user data in the redirect response
+        response = storeUserDataInCookies(response, userDetails);
 
-      // If going to welcome page, mark it as seen
-      if (redirectPath === "/welcome") {
-        response = markWelcomePageAsSeen(response);
+        // If going to welcome page, mark it as seen
+        if (redirectPath === "/welcome") {
+          response = markWelcomePageAsSeen(response);
+        }
+
+        return response;
       }
-
-      return response;
     }
   }
 
   // If user is currently ON the welcome page, mark it as seen
   if (pathname === "/welcome") {
-    const response = NextResponse.next();
-    return markWelcomePageAsSeen(response);
+    response = markWelcomePageAsSeen(response);
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export async function proxy(request: NextRequest) {
@@ -327,7 +432,7 @@ export async function proxy(request: NextRequest) {
 
   // If authenticated and trying to access auth pages, handle routing based on user details
   if (isAuthenticated && isAuthRoute) {
-    return await handleAuthenticatedUser(request);
+    return await handleAuthenticatedUser(request, true);
   }
 
   // If trying to access protected route
@@ -358,7 +463,7 @@ export async function proxy(request: NextRequest) {
         );
 
         if (refreshResponse.ok) {
-          // Token refreshed successfully - now check user details
+          // Token refreshed successfully - ALWAYS fetch and store fresh user data
           const response = NextResponse.next();
 
           // Copy cookies from refresh response
@@ -368,34 +473,8 @@ export async function proxy(request: NextRequest) {
             }
           });
 
-          // After successful refresh, check user details
-          const userDetails = await fetchUserDetails(request);
-          if (userDetails) {
-            const redirectPath = determineRedirectPath(
-              userDetails,
-              pathname,
-              request
-            );
-            if (
-              redirectPath &&
-              pathname !== redirectPath &&
-              !pathname.startsWith(redirectPath.split("?")[0])
-            ) {
-              // If redirecting TO welcome page, mark it as seen
-              let response = NextResponse.redirect(
-                new URL(redirectPath, request.url)
-              );
-
-              // If going to welcome page, mark it as seen
-              if (redirectPath === "/welcome") {
-                response = markWelcomePageAsSeen(response);
-              }
-
-              return response;
-            }
-          }
-
-          return response;
+          // After successful refresh, ALWAYS fetch fresh user details
+          return await handleAuthenticatedUser(request, true);
         } else {
           // Refresh failed - redirect to login
           const loginUrl = new URL("/login", request.url);
@@ -417,67 +496,20 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
-    // User is authenticated - check user details for protected routes
+    // User is authenticated - ALWAYS fetch and store fresh user data
     if (isAuthenticated) {
-      const userDetails = await fetchUserDetails(request);
-      if (userDetails) {
-        const redirectPath = determineRedirectPath(
-          userDetails,
-          pathname,
-          request
-        );
-        if (
-          redirectPath &&
-          pathname !== redirectPath &&
-          !pathname.startsWith(redirectPath.split("?")[0])
-        ) {
-          // If redirecting TO welcome page, mark it as seen
-          let response = NextResponse.redirect(
-            new URL(redirectPath, request.url)
-          );
-
-          // If going to welcome page, mark it as seen
-          if (redirectPath === "/welcome") {
-            response = markWelcomePageAsSeen(response);
-          }
-
-          return response;
-        }
-      }
+      return await handleAuthenticatedUser(request, true);
     }
   }
 
-  // If authenticated and accessing public routes (except auth), check if should redirect
+  // If authenticated and accessing public routes (except auth), ALWAYS fetch and store fresh data
   if (isAuthenticated && !isAuthRoute && isPublicRoute && pathname !== "/") {
-    const userDetails = await fetchUserDetails(request);
-    if (userDetails) {
-      const redirectPath = determineRedirectPath(
-        userDetails,
-        pathname,
-        request
-      );
-      if (
-        redirectPath &&
-        pathname !== redirectPath &&
-        !pathname.startsWith(redirectPath.split("?")[0])
-      ) {
-        // If redirecting TO welcome page, mark it as seen
-        let response = NextResponse.redirect(
-          new URL(redirectPath, request.url)
-        );
-
-        // If going to welcome page, mark it as seen
-        if (redirectPath === "/welcome") {
-          response = markWelcomePageAsSeen(response);
-        }
-
-        return response;
-      }
-    }
+    return await handleAuthenticatedUser(request, true);
   }
 
   return NextResponse.next();
 }
+
 
 export const config = {
   matcher: [
@@ -487,8 +519,7 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public files (public folder)
-     * - api routes (except auth)
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\..*|api/(?!auth)).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\..*|api/auth).*)",
   ],
 };

@@ -5,6 +5,7 @@ import { IMAGES } from "@/lib/images";
 import QueryProvider from "@/components/QueryProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
+import { DataHydrator } from "@/components/DataHydrator";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -120,6 +121,7 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <QueryProvider>
+            <DataHydrator />
               {children}
               <Analytics />
           </QueryProvider>

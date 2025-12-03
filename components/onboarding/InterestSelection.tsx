@@ -1,8 +1,7 @@
 import { Public_Sans, Mulish, Inter } from "next/font/google";
-import Image from "next/image";
 import { Plus } from "lucide-react";
 import { cx } from "class-variance-authority";
-import { useGetInterests } from "@/hooks/useOnboard";
+import { Interest, useGetInterests } from "@/hooks/useOnboard";
 import { useState } from "react";
 
 const publicSans = Public_Sans({
@@ -28,54 +27,16 @@ const InterestSelection = ({
 }: {
   onInterestsChange?: (interests: string[]) => void;
 }) => {
-  const interestCategories = [
-    {
-      icon: "/icons/trending.svg",
-      title: "Fashion",
-      slug: "fashion",
-    },
-     {
-      icon: "/icons/popcorn.svg",
-      title: "Travel",
-      slug: "travel",
-    },
-     {
-      icon: "/icons/popcorn.svg",
-      title: "Movies",
-      slug: "movies",
-    },
-    {
-      icon: "/icons/popcorn.svg",
-      title: "Technology",
-      slug: "technology",
-    },
-    {
-      icon: "/icons/popcorn.svg",
-      title: "Music",
-      slug: "music",
-    },
-    {
-      icon: "/icons/popcorn.svg",
-      title: "Food",
-      slug: "food",
-    },
-    {
-      icon: "/icons/popcorn.svg",
-      title: "Sports",
-      slug: "sports",
-    },
-    {
-      icon: "/icons/trending.svg",
-      title: "Education",
-      slug: "education",
-    },
-  ];
+
 
   const { data, isLoading } = useGetInterests({
     page: 1,
-    length: 15,
-    parent_slugs: interestCategories.map((cat) => cat.slug),
+    length: 15
   });
+
+  const interestByCategory = data?.interestByCategory;
+  const interestCategories = data?.interestCategories || [];
+
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
 
   const toggleInterest = (interestSlug: string) => {
@@ -115,27 +76,26 @@ const InterestSelection = ({
         {selectedInterests.length} Selected
       </p>
     <div className="space-y-8 sm:space-y-12 md:space-y-18">
-      {interestCategories.map((category) => (
+      {interestCategories.map((category : Interest) => (
         <div key={category.slug}>
           <div className="flex items-center gap-2 sm:gap-4">
-            <Image
-              src={category.icon}
-              alt={category.title}
-              width={40}
-              height={40}
-            />
+            <div className="w-10 h-10 bg-[#E7E7FF] dark:bg-[#3a3a3a] rounded-full flex items-center justify-center">
+              <span className="text-[#39089D] dark:text-[#743FE3] text-xl">
+                {category.name.charAt(0)}
+              </span>
+            </div>
             <h1
               className={`${publicSans.variable} font-medium!  text-base! sm:text-2xl! md:text-[2.2rem]! md:font-normal!`}
             >
-              {category.title}
+              {category.name}
             </h1>
           </div>
           <ul className="mt-4 sm:mt-8 flex flex-wrap gap-4">
-            {data &&
-              data[category.slug]?.length > 0 &&
-              data[category.slug]
+            {interestByCategory &&
+              interestByCategory[category.slug]?.length > 0 &&
+              interestByCategory[category.slug]
                 .slice(0, category.slug === "fashion" ? 10 : undefined)
-                .map((interest) => (
+                .map((interest : Interest) => (
                   <li
                     key={interest._id}
                     onClick={() => toggleInterest(interest.slug)}

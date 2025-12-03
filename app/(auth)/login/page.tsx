@@ -64,7 +64,7 @@ const Login = () => {
 
     if (!isValid) {
       setPasswordValid(false);
-      setErrors(passwordErrors);
+      setErrors(["Invalid password. Please check your password and try again."]);
       return;
     } else {
       setPasswordValid(true);
