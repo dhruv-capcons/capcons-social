@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { getServerSession } from '@/lib/auth/server';
 import Header from '@/components/feed/Header';
 import Sidebar from '@/components/feed/Sidebar';
+import CreatePostModals from '@/components/post/create/CreatePostModals/Index';
 
 export default async function FeedLayout({
   children,
@@ -23,6 +24,7 @@ export default async function FeedLayout({
           {children}
         </main>
       </div>
+      <CreatePostModals />
     </div>
   );
 }
