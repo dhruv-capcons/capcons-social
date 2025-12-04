@@ -1,7 +1,7 @@
 "use client";
 
 import { Inter, Public_Sans } from "next/font/google";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import CardBgSelection from "@/components/onboarding/CardBgSelection";
 import InterestSelection from "@/components/onboarding/InterestSelection";
@@ -36,7 +36,7 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
   return new File([u8arr], filename, { type: mime });
 };
 
-const OnBoarding = () => {
+const OnBoardingContent = () => {
   const { setOnboardingStep } = useOnboardStore();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -258,6 +258,17 @@ const OnBoarding = () => {
         </div>
       </section>
     </div>
+  );
+};
+
+
+
+
+const OnBoarding = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <OnBoardingContent />
+    </Suspense>
   );
 };
 
