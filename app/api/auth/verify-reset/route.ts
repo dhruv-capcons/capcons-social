@@ -53,11 +53,11 @@ export async function POST(request: Request) {
     if (passwordResetToken) {
       const cookieStore = await cookies();
       cookieStore.set('password_reset_token', passwordResetToken, {
-        httpOnly: true,
+        httpOnly: false,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'none',
+        sameSite:  'lax' as const,
         path: '/',
-        maxAge: 5 * 60, // 15 minutes
+        maxAge: 15 * 60, // 15 minutes
       });
     }
 

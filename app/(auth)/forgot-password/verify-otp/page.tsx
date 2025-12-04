@@ -97,7 +97,7 @@ const VerifyOTPContent = () => {
   const handleResendCode = () => {
     const resendData = new FormData();
     resendData.append("request_id", requestId);
-    resendData.append("circle_id", "default_circle");
+    resendData.append("circle_id", "674ec38742685bab44bfb7ec");
 
     resendOtp.mutate(resendData, {
       onSuccess: (data) => {

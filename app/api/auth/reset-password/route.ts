@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import axios from 'axios';
+
 
 /**
  * POST /api/auth/reset-password
@@ -14,6 +14,7 @@ export async function POST(request: Request) {
 
     // Get password_reset_token from cookies
     const cookieStore = await cookies();
+    console.log('Cookies:', cookieStore.getAll());
     const passwordResetToken = cookieStore.get('password_reset_token')?.value;
 
     if (!passwordResetToken) {
@@ -29,16 +30,39 @@ export async function POST(request: Request) {
     backendFormData.append('new_password', new_password);
 
     // Call backend reset password endpoint with token in cookie
-    const response = await axios.post(
+    const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/auth/forget-password/reset`,
-      backendFormData,
       {
+        method: 'POST',
+        body: backendFormData,
         headers: {
-          'Content-Type': 'multipart/form-data',
           'Cookie': `password_reset_token=${passwordResetToken}`,
         },
+        credentials: 'include',
       }
     );
+
+    // Check if response has content before parsing
+    const contentType = response.headers.get('content-type');
+    let responseData = null;
+
+    if (contentType?.includes('application/json')) {
+      const text = await response.text();
+      if (text) {
+        try {
+          responseData = JSON.parse(text);
+        } catch (e) {
+          console.error('Failed to parse response:', text);
+        }
+      }
+    }
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: responseData?.error || responseData?.message || 'Password reset failed' },
+        { status: response.status || 400 }
+      );
+    }
 
     // Clear the password_reset_token after successful reset
     cookieStore.delete('password_reset_token');
@@ -47,7 +71,7 @@ export async function POST(request: Request) {
       {
         success: true,
         message: 'Password reset successfully',
-        data: response.data,
+        data: responseData,
       },
       { status: 200 }
     );

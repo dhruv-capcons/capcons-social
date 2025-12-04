@@ -73,6 +73,7 @@ const ResetPasswordContent = () => {
     fetch('/api/auth/reset-password', {
       method: 'POST',
       body: resetData,
+      credentials: 'include',
     })
       .then(async (response) => {
         if (!response.ok) {
