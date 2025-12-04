@@ -112,9 +112,6 @@ function markWelcomePageAsSeen(response: NextResponse): NextResponse {
   return response;
 }
 
-/**
- * Store user data in cookies
- */
 function storeUserDataInCookies(
   response: NextResponse,
   userDetails: UserDetails
@@ -128,7 +125,7 @@ function storeUserDataInCookies(
     gender: userDetails.gender,
     description: userDetails.description,
     pfp_url: userDetails.pfp_url,
-    interests: userDetails.interests,
+    interests: userDetails.interests || [],
     color_card_id: userDetails.color_card_id,
     onboarding_step: userDetails.onboarding_step,
     email: userDetails.email,
@@ -137,6 +134,7 @@ function storeUserDataInCookies(
     is_phone_verified: userDetails.is_phone_verified,
     country_code: userDetails.country_code,
     registration_date: userDetails.registration_date,
+    _timestamp: Date.now(), // For cache validation
   };
 
   response.cookies.set({
@@ -194,6 +192,34 @@ async function clearAuthCookiesAndRedirect(
 async function fetchUserDetails(
   request: NextRequest
 ): Promise<{ data: UserDetails | null; error: boolean }> {
+  // FIRST: Check if we have fresh data in cookie
+  const userDataCookie = request.cookies.get("user_data");
+  if (userDataCookie && userDataCookie.value) {
+    try {
+      const cachedData = JSON.parse(userDataCookie.value);
+      const cacheAge = Date.now() - (cachedData._timestamp || 0);
+
+      // Use cache if less than 30 seconds old
+      if (cacheAge < 30 * 1000) {
+        // 30 seconds cache
+        console.log("[PROXY] Using cached user data (age:", cacheAge, "ms)");
+        return {
+          data: {
+            ...cachedData,
+            _id: cachedData._id,
+            name: cachedData.name,
+            userslug: cachedData.user_name || cachedData.userslug,
+            // ... map other fields
+          },
+          error: false,
+        };
+      }
+    } catch (e) {
+      // Cache parsing failed, fetch fresh
+      console.log("[PROXY] Cache parsing failed, fetching fresh");
+    }
+  }
+
   console.log("[PROXY] Fetching user details from API...");
   try {
     const userDetailsUrl = `${process.env.NEXT_PUBLIC_API_URL}/users/userdetails`;
@@ -325,15 +351,14 @@ function determineRedirectPath(
 }
 
 /**
- * Handle authenticated user routing - ALWAYS fetches and stores fresh data
+ * Handle authenticated user routing
  */
 async function handleAuthenticatedUser(
-  request: NextRequest,
-  shouldCheckRedirect: boolean = true
+  request: NextRequest
 ): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
 
-  // ALWAYS fetch fresh user details on every request
+  // Fetch user details ONLY when needed
   const { data: userDetails, error } = await fetchUserDetails(request);
 
   // If API has error or user doesn't exist, logout immediately
@@ -344,32 +369,28 @@ async function handleAuthenticatedUser(
     return clearAuthCookiesAndRedirect(request, pathname);
   }
 
-  // ALWAYS store fresh user data in cookies
+  // Store user data in cookies for client-side
   let response = NextResponse.next();
   response = storeUserDataInCookies(response, userDetails);
 
-  // Determine if user needs to be redirected
-  if (shouldCheckRedirect) {
-    const redirectPath = determineRedirectPath(userDetails, pathname, request);
+  const redirectPath = determineRedirectPath(userDetails, pathname, request);
 
-    if (redirectPath) {
-      // Don't redirect if already on the correct path
-      if (
-        pathname !== redirectPath &&
-        !pathname.startsWith(redirectPath.split("?")[0])
-      ) {
-        // Create redirect response
-        response = NextResponse.redirect(new URL(redirectPath, request.url));
-        // STILL store user data in the redirect response
-        response = storeUserDataInCookies(response, userDetails);
+  if (redirectPath) {
+    // Don't redirect if already on the correct path
+    if (
+      pathname !== redirectPath &&
+      !pathname.startsWith(redirectPath.split("?")[0])
+    ) {
+      // Create redirect response
+      response = NextResponse.redirect(new URL(redirectPath, request.url));
+      response = storeUserDataInCookies(response, userDetails);
 
-        // If going to welcome page, mark it as seen
-        if (redirectPath === "/welcome") {
-          response = markWelcomePageAsSeen(response);
-        }
-
-        return response;
+      // If going to welcome page, mark it as seen
+      if (redirectPath === "/welcome") {
+        response = markWelcomePageAsSeen(response);
       }
+
+      return response;
     }
   }
 
@@ -381,6 +402,7 @@ async function handleAuthenticatedUser(
   return response;
 }
 
+// Update the main proxy function logic
 export async function proxy(request: NextRequest) {
   console.log(`[PROXY] Request path: ${request.nextUrl.pathname}`);
   const { pathname } = request.nextUrl;
@@ -415,6 +437,11 @@ export async function proxy(request: NextRequest) {
     (route) => pathname === route || pathname.startsWith(route + "/")
   );
 
+  const isOnboardingRoute =
+    pathname.startsWith("/user-details") ||
+    pathname.startsWith("/onboarding") ||
+    pathname === "/welcome";
+
   // Determine authentication status
   const hasAccessToken = !!accessTokenCookie?.value;
   const hasRefreshToken = !!refreshTokenCookie?.value;
@@ -430,16 +457,15 @@ export async function proxy(request: NextRequest) {
     (hasAccessToken && !isAccessTokenExpired) ||
     (hasRefreshToken && !isRefreshTokenExpired);
 
-  // If authenticated and trying to access auth pages, handle routing based on user details
+  // 1. ONLY fetch user details for auth routes (login, signup)
   if (isAuthenticated && isAuthRoute) {
-    return await handleAuthenticatedUser(request, true);
+    return await handleAuthenticatedUser(request);
   }
 
-  // If trying to access protected route
+  // 2. For protected routes, just check authentication
   if (
     !isPublicRoute &&
-    !pathname.startsWith("/onboarding") &&
-    !pathname.startsWith("/user-details")
+    !isOnboardingRoute // Don't check onboarding routes here
   ) {
     // No tokens at all - redirect to login
     if (!hasAccessToken && !hasRefreshToken) {
@@ -463,7 +489,7 @@ export async function proxy(request: NextRequest) {
         );
 
         if (refreshResponse.ok) {
-          // Token refreshed successfully - ALWAYS fetch and store fresh user data
+          // Token refreshed successfully - continue
           const response = NextResponse.next();
 
           // Copy cookies from refresh response
@@ -473,8 +499,7 @@ export async function proxy(request: NextRequest) {
             }
           });
 
-          // After successful refresh, ALWAYS fetch fresh user details
-          return await handleAuthenticatedUser(request, true);
+          return response;
         } else {
           // Refresh failed - redirect to login
           const loginUrl = new URL("/login", request.url);
@@ -493,23 +518,27 @@ export async function proxy(request: NextRequest) {
     if (isAccessTokenExpired && isRefreshTokenExpired) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
+      await clearAuthCookies();
       return NextResponse.redirect(loginUrl);
     }
 
-    // User is authenticated - ALWAYS fetch and store fresh user data
+    // User is authenticated - allow access to protected routes
     if (isAuthenticated) {
-      return await handleAuthenticatedUser(request, true);
+      return NextResponse.next();
     }
   }
 
-  // If authenticated and accessing public routes (except auth), ALWAYS fetch and store fresh data
-  if (isAuthenticated && !isAuthRoute && isPublicRoute && pathname !== "/") {
-    return await handleAuthenticatedUser(request, true);
+  // 3. For onboarding routes, check if user should be there
+  if (isAuthenticated && isOnboardingRoute) {
+    return await handleAuthenticatedUser(request);
   }
+
+  // 4. For authenticated users on public routes (like home page),
+  // only redirect if they're on auth routes (handled above)
+  // Otherwise, just let them through
 
   return NextResponse.next();
 }
-
 
 export const config = {
   matcher: [

@@ -2,8 +2,6 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/authStore";
-import { useUserStore } from "@/store/userStore";
-import { useOnboardStore } from "@/store/onboardStore";
 import api from "@/lib/axios";
 import {
   User,
@@ -63,9 +61,6 @@ interface UserDetailsResponse {
 
 // Fetch user details
 export function useUserDetails() {
-  const { setUserData } = useUserStore();
-  const { setOnboardingStep, setInterests, setProfileImage, setColorCard } = useOnboardStore();
-
   // Check if access token exists
   const hasAccessToken = typeof window !== 'undefined' 
     ? document.cookie.split('; ').find(row => row.startsWith('access_token='))
@@ -90,45 +85,13 @@ export function useUserDetails() {
       }
 
       const data: UserDetailsResponse = await response.json();
-      const userDetails = data.data;
-
-      // Update user store
-      setUserData({
-        name: userDetails.name,
-        user_name: userDetails.userslug,
-        email: '', // Not provided in response
-        phone: '', // Not provided in response
-        dob: userDetails.dob,
-        description: userDetails.description,
-        pfp_url: userDetails.pfp_url,
-        color_card_id: userDetails.color_card_id,
-        interests: userDetails.interests,
-        onboarding_step: userDetails.onboarding_step,
-      });
-
-      // Update onboarding store
-      if (userDetails.pfp_url) {
-        setProfileImage(userDetails.pfp_url);
-      }
-      if (userDetails.interests && userDetails.interests.length > 0) {
-        setInterests(userDetails.interests);
-      }
-      if (userDetails.color_card_id) {
-        setColorCard(userDetails.color_card_id);
-      }
-
-      // Set onboarding step
-      let step = 1;
-      if (userDetails.pfp_url) step = 2;
-      if (userDetails.interests && userDetails.interests.length > 0) step = 3;
-      if (userDetails.color_card_id) step = 4;
-      setOnboardingStep(step);
-
       return data;
     },
     enabled: !!hasAccessToken,
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnMount: false, // Don't refetch on component mount if data exists
   });
 }
 

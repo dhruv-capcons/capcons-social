@@ -9,7 +9,7 @@ interface UserData {
   gender: string;
   description: string;
   pfp_url: string;
-  interests: string[];
+  interests?: string[];
   color_card_id: string;
   onboarding_step: number;
   email: string;

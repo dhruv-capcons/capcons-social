@@ -42,7 +42,7 @@ const UserDetails = () => {
       if (userData.onboarding_step && userData.onboarding_step > 4) {
         router.push("/welcome");
       } else {
-        router.push("/onboarding");
+        router.push(`/onboarding?step=${userData.onboarding_step || 1}`);
       }
     }
   }, [userData, router]);
@@ -131,16 +131,32 @@ const UserDetails = () => {
   
     updateUserProfile(formData, {
       onSuccess: (data) => {
+        // Only update fields that exist in the UserStore UserData type
+        const currentUserData = userData || {
+          _id: '',
+          gender: '',
+          is_email_verified: false,
+          is_phone_verified: false,
+          country_code: '',
+          registration_date: ''
+        };
+        
         setUserData({
+          _id: currentUserData._id || '',
           dob: formData.dob,
           description: formData.description,
           name: data.data.name,
           user_name: formData.username,
           pfp_url: data.data.pfp_url,
           color_card_id: data.data.color_card_id,
-          interests: data.data.interests,
+          interests: data.data.interests || undefined,
           email: data.data.email,
           phone: data.data.phone,
+          gender: currentUserData.gender || '',
+          is_email_verified: currentUserData.is_email_verified || false,
+          is_phone_verified: currentUserData.is_phone_verified || false,
+          country_code: currentUserData.country_code || '',
+          registration_date: currentUserData.registration_date || '',
           onboarding_step: 3, // Move to next step
         });
         // Get user data from cookie
@@ -159,13 +175,14 @@ const UserDetails = () => {
             }
             
             setOnboardingStep(onboardingStep);
-            router.push("/onboarding");
+            router.push(`/onboarding?step=${onboardingStep}`);
+            
           } catch (error) {
             console.error("Error parsing user data:", error);
-            router.push("/onboarding");
+            router.push(`/onboarding?step=${1}`);
           }
         } else {
-          router.push("/onboarding");
+          router.push(`/onboarding?step=${1}`);
         }
       },
       onError: (error) => {

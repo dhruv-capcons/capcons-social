@@ -69,6 +69,9 @@ export default function Sidebar() {
               </li>
             );
           })}
+           <button className={`w-full ${inter.className} bg-[#39089D] hover:bg-[#39089DD9] active:bg-[#2D067E] disabled:bg-[#F6F6F6] disabled:text-[#C1C1C2] dark:bg-[#4309B6] dark:hover:bg-[#4d0ad1] dark:active:bg-[#33078c] dark:disabled:bg-[#1C1C1C] dark:disabled:text-[#5A5A5A] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0)_100%)] shadow-xs shadow-[#0A0D120D] text-white font-medium py-2 px-6 rounded-3xl transition-all duration-200 transform outline-0 text-base! cursor-pointer disabled:cursor-not-allowed`}>
+           Post
+        </button>
         </ul>
       </nav>
 

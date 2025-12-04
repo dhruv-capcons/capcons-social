@@ -2,7 +2,7 @@
 
 import { Inter, Public_Sans } from "next/font/google";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import CardBgSelection from "@/components/onboarding/CardBgSelection";
 import InterestSelection from "@/components/onboarding/InterestSelection";
 import ProfilePhotoUpload from "@/components/onboarding/ProfilePhotoUpload";
@@ -37,24 +37,24 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
 };
 
 const OnBoarding = () => {
-  const { onboardingStep, setOnboardingStep } = useOnboardStore();
+  const { setOnboardingStep } = useOnboardStore();
   const router = useRouter();
+  const searchParams = useSearchParams();
   
-  // API steps: 1=username, 2=pfp, 3=interests, 4=color_card, >4=complete
-  // UI steps: 1=pfp, 2=interests, 3=color_card
-  // So we need to subtract 1 from API step to get UI step
-  const calculateUIStep = (apiStep: number) => {
-    if (apiStep > 4) return 4; // Onboarding complete, will redirect
-    if (apiStep <= 1) return 1; // Not started or just username
-    return apiStep - 1; // Convert API step to UI step
-  };
-  
-  const initialStep = calculateUIStep(onboardingStep || 1);
+  // Get step from URL params, default to 1
+  const urlStep = parseInt(searchParams.get("step") || "1");
   
   const [step, setStep] = useState({
-    number: initialStep,
+    number: urlStep,
     isSkipable: true,
   });
+
+
+  // Update URL when step changes
+  const updateStep = (newStep: number) => {
+    router.push(`/onboarding?step=${newStep}`);
+    setStep((prev) => ({ ...prev, number: newStep }));
+  };
 
 
 
@@ -65,9 +65,10 @@ const OnBoarding = () => {
 
   const handleContinue = () => {
     if (step.number < 3) {
-      setStep((prev) => ({ ...prev, number: prev.number + 1 }));
+      const nextStep = step.number + 1;
+      updateStep(nextStep);
       // Update store: UI step + 1 to convert back to API step
-      const nextApiStep = step.number + 2; // +1 for next step, +1 for offset
+      const nextApiStep = nextStep + 1; // +1 for offset (UI step 1 = API step 2)
       setOnboardingStep(nextApiStep);
     }
   };
@@ -141,9 +142,10 @@ const OnBoarding = () => {
       {step.number > 1 && (
         <button
           onClick={() => {
-            setStep((prev) => ({ ...prev, number: prev.number - 1 }));
+            const prevStep = step.number - 1;
+            updateStep(prevStep);
             // Update store: UI step + 1 to convert back to API step
-            const prevApiStep = (step.number - 1) + 1; // -1 for prev step, +1 for offset
+            const prevApiStep = prevStep + 1; // +1 for offset
             setOnboardingStep(prevApiStep);
           }}
           className="absolute top-2 xmd:top-10 left-6 xmd:left-10 border-0 outline-0 bg-transparent cursor-pointer dark:text-white z-100 flex items-center justify-between"

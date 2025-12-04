@@ -2,7 +2,6 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useOnboardStore } from "@/store/onboardStore";
-import { useUserStore } from "@/store/userStore";
 import api from "@/lib/axios";
 import { ApiError } from "@/types/auth";
 
@@ -162,7 +161,6 @@ export function useUpdateProfilePic() {
 
 export function useUpdateColorCard() {
   const { setColorCard, setLoading } = useOnboardStore();
-  const { setUserData } = useUserStore();
 
   return useMutation<{ message: string }, ApiError, { color_card: string }>({
     mutationFn: async (data: { color_card: string }) => {
@@ -187,22 +185,6 @@ export function useUpdateColorCard() {
     },
     onSuccess: (data, variables) => {
       setColorCard(variables.color_card);
-
-      // Extract user data from cookie
-      const userDataCookie = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("user_data="));
-
-      if (userDataCookie) {
-        try {
-          const userData = JSON.parse(
-            decodeURIComponent(userDataCookie.split("=")[1])
-          );
-          setUserData(userData);
-        } catch (error) {
-          console.error("Error parsing user data:", error);
-        }
-      }
     },
     onSettled: () => {
       setLoading(false);
@@ -232,7 +214,7 @@ interface UserData {
 
 export function useOnboardingGeneral() {
   const { setLoading } = useOnboardStore();
-  const { setUserData } = useUserStore();
+
 
   return useMutation<{ data: UserData }, ApiError, useOnboardingGeneralData>({
     mutationFn: async (data: useOnboardingGeneralData) => {
@@ -256,11 +238,6 @@ export function useOnboardingGeneral() {
       }
 
       return json;
-    },
-    onSuccess: (response) => {
-      if (response.data) {
-        setUserData(response.data);
-      }
     },
     onSettled: () => {
       setLoading(false);
